@@ -1,0 +1,53 @@
+{% extends base_layout %}
+
+{% block header_title %}
+        {% trans %}Sign Up{% endtrans %}
+{% endblock %}
+
+{% block header_title_lead %}
+    <h1>Step #1: Signup Link</h1>
+    <p class="lead">
+        Enter your email address below and we'll send you a link to continue your registration.
+    </p>
+{% endblock %}
+
+{% block content %}
+    <form id="form_register" action="{{ url|safe }}" method="post" class="well form-horizontal">
+        <fieldset>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            {{ macros.input(form, "email", _("Email"), placeholder=_("foobar@baz.com"), class="input-xlarge focused required email", type="email") }}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-inverse btn-large">{% trans %}Send Me a Link{% endtrans %}</button>
+            </div>
+        </fieldset>
+    </form>
+    <script type="text/javascript" language="JavaScript">
+    $(window).load(function(){
+        $("#email").focus();
+    });
+    </script>
+{% endblock %}
+
+{% block mediaJS %}
+<script type="text/javascript">
+    $().ready(function() {
+        $("#form_register").validate({
+            submitHandler: function(form) {
+                    form.submit();
+            },
+            rules: {
+                password: 'required',
+                c_password: {
+                    required: true,
+                    equalTo: '#password'
+                }
+            },
+            errorPlacement: function(error, element) {
+                element.parent().parent().addClass("error");
+                error.addClass("help-inline").appendTo( element.parent() );
+            }
+        });
+    });
+</script>
+{% endblock %}
+

@@ -1,0 +1,55 @@
+{% extends base_layout %}
+
+{% block header_title %}
+        {% trans %}Sign Up{% endtrans %}
+{% endblock %}
+
+{% block header_title_lead %}
+    <h1>Step #2: Pick a Username & Password</h1>
+    <p class="lead">
+        Pick a username and password for your account.  Sorry, no bananas allowed.
+    </p>
+{% endblock %}
+
+{% block content %}
+
+    <form id="form_register" action="{{ url|safe }}" method="post" class="well form-horizontal">
+        <fieldset>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            {{ macros.input(form, "username", _("Username"), class="input-xlarge focused required", value=suggested_username) }}
+            {{ macros.input(form, "password", _("Password"), class="input-xlarge focused required", type="password") }}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-inverse btn-large">{% trans %}Finish Registration{% endtrans %}</button>
+            </div>
+        </fieldset>
+    </form>
+    <script type="text/javascript" language="JavaScript">
+    $(window).load(function(){
+        $("#username").focus();
+    });
+    </script>
+{% endblock %}
+
+{% block mediaJS %}
+<script type="text/javascript">
+    $().ready(function() {
+        $("#form_register").validate({
+            submitHandler: function(form) {
+                    form.submit();
+            },
+            rules: {
+                password: 'required',
+                c_password: {
+                    required: true,
+                    equalTo: '#password'
+                }
+            },
+            errorPlacement: function(error, element) {
+                element.parent().parent().addClass("error");
+                error.addClass("help-inline").appendTo( element.parent() );
+            }
+        });
+    });
+</script>
+{% endblock %}
+

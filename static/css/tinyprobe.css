@@ -1,0 +1,316 @@
+html, body {
+	height: 100%;
+	vertical-align: baseline;
+	padding-top: 0px;
+}
+
+#page {
+	min-width: 100%;
+	vertical-align: baseline;
+	min-height: 100%;
+	height: 100%;
+	height: auto !important;
+	margin: 0 auto -200px;
+}
+
+#content {
+	padding-top: 0px;
+}
+
+.subhead {
+	padding-top: 80px;
+}
+
+.blurb {
+	margin-top: 16px;
+	font-size: 30px;
+	font-weight: 200;
+}
+
+.btn.huge {
+	font-size: 24px;
+	line-height: normal;
+	padding: 15px 18px 15px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+
+.hero {
+	background: #F0F0F0;
+	border-top: 3px solid #EBEBEB;
+	border-bottom: 1px solid #E1E1E1;
+	margin-bottom: 30px;
+	padding: 70px 0 6px;
+	width: 100%;
+}
+
+.hero h2 {
+	font-size: 42px;
+	font-weight: bold;
+}
+
+.marketing p {
+	font-size: 15px;
+}
+
+a {
+	color: #8D8D8D;
+	text-decoration: underline;
+}
+
+a.btn {
+	text-decoration: none;
+}
+
+.close {
+	font-color: white;
+}
+
+.alert-success {
+	background-color: #8D8D8D;
+}
+
+#third_party_login .social-login-icons a.social-btn {
+    display: inline-block;
+    margin: 0 0 0.5em 0;
+    text-indent: -9000px;
+    width: 32px;
+    height: 32px;
+    background-image: url(../img/social-login-icons.png);
+    background-repeat: no-repeat;
+}
+.social-btn-google{
+    background-position: 0 0;
+}
+.social-btn-github{
+    background-position: -32px 0;
+}
+.social-btn-twitter{
+    background-position: -64px 0;
+}
+.btn-remove {
+	margin-left: 8px;
+}
+
+.dropdown-menu a {
+	text-decoration: none;
+}
+
+footer a {
+	text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, code, del, dfn, em, img, q, s, samp, small, strike, strong, sub, sup, tt, var, dd, dl, dt, li, ol, ul, fieldset, form, label, legend, button, table, caption, tbody, tfoot, thead, tr, th, td {
+    font-family: inherit;
+}
+
+h2 {
+	font-size: 22px;
+	margin-bottom: 0px;
+}
+
+h4 {
+	margin-bottom: 4px;
+}
+
+.container {
+	padding-left: 0px;
+}
+
+.navbar .brand {
+	margin: 8px 0px 6px;
+	padding-left: 4px;
+}
+
+.navbar .btn-navbar {
+	margin-top: 13px;
+}
+
+.brand img {
+	margin-bottom: 3px !important;
+	margin-right: 4px !important;
+}
+
+a.brand {
+	text-decoration: none;
+}
+
+.navbar .navbar-inner {
+	background-image: -webkit-linear-gradient(top, #FFF, #F8F8F8);
+	background-image: -o-linear-gradient(top, #FFF, #F8F8F8);
+	background-image: linear-gradient(to bottom, #FFF, #F8F8F8);
+	border-bottom: 1px solid #D2D2D2;
+}
+
+.navbar .divider-vertical {
+	height: 41px;
+}
+
+.navbar-container {
+	max-width: 1170px;
+	margin-left: auto;
+	margin-right: auto;
+	zoom: 1;
+}
+
+.navbar .nav.pull-right {
+	margin: 10px 4px 6px;
+}
+
+.dropdown-menu {
+	-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	background-color: #fff;
+	background-image: none;
+	min-width: 240px;
+	margin-top: 6px;
+}
+
+::selection {
+	background: #EBEBEB;
+}
+
+.navbar .nav > li > a {
+	padding: 3px 10px 4px 8px;
+	margin-top: 6px;
+	margin-right: 12px;
+}
+
+.navbar .divider-vertical {
+	margin-right: 0px;
+}
+
+.auth-at-dropdown label, input, button, select, textarea {
+	font-size: 14px;
+}
+
+input {
+    outline: none;
+}
+
+div.control-group a {
+	font-size: 14px;
+}
+
+.control-label {
+	margin-bottom: 0px;
+}
+
+img.bs-icon {
+	float: left;
+	margin-top: 18px;
+	padding-right: 10px;
+}
+
+span.required {
+    color: #2E2E2E;
+}
+
+.input-xlarge {
+	width: 420px;
+}
+
+.form-actions {
+	padding-left: 0px !important;
+}
+
+.control-group.error > label, .control-group.error .help-block, .control-group.error .help-inline {
+	color: #2E2E2E;
+	border-color: #222222;
+}
+
+label, input, button, select, textarea {
+	font-size: 20px;
+}
+
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+	font-size: 19px;
+	height: 100%;
+}
+
+.form-actions {
+	border top: none;
+}
+
+#country {
+	width: 300px;
+}
+
+ul.dropdown-menu {
+	font-size: 14px;
+}
+
+.btn-large {
+	font-size: 20px;
+	line-height: 100%;
+}
+
+footer {
+	vertical-align: baseline;
+	margin-top: 19px;
+	padding-top: 19px;
+	font-size: 13px;
+	background: #252525;
+	border-top: 0;
+    border-top: 0;
+    height: 166px;
+}
+footer h4 {
+    color: #999;
+}
+footer p {
+    color: #999;
+}
+footer a {
+    color: #fff;
+}
+footer a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+footer #footer-floor {
+    background: #1b1b1b;
+    padding-top: 10px;
+}
+footer #footer-floor h3, footer #footer-floor h4 {
+    color: #fff;
+}
+footer #footer-floor #elsewhere-msg {
+    padding-top: 18px;
+}
+footer #elsewhere-icons {
+    padding: 0px;
+    margin: 0px;
+}
+footer #elsewhere-icons a {
+    background: url("/img/footer-icons-sprite.png") 0 0 no-repeat;
+    float: left;
+    width: 35px;
+    height: 35px;
+    overflow: hidden;
+    text-indent: -900px;
+    margin: 0 5px 0 0;
+}
+
+footer #elsewhere-icons a.google { background-position: -35px 0 }
+footer #elsewhere-icons a.github { background-position: -70px 0 }
+
+footer ul, h4 {
+	margin-top: 4px;
+}
+footer ul {
+	margin-bottom: 16px;
+}
+.footer, .push {
+	height: 200px;
+}
+
+.form-horizontal .controls {
+	margin-left: 0px;
+}
+
+.recaptchatable #recaptcha_response_field {
+	width: 136px !important;
+	font-size: 11pt;
+}
+

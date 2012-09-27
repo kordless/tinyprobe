@@ -1,0 +1,72 @@
+{% extends base_layout %}
+
+{% block header_title %}
+        {% trans %}Apps{% endtrans %}
+{% endblock %}
+
+{% block header_title_lead %}
+    <h1>My Apps</h1>
+    <p class="lead">
+    	Apps can be run from the shell, embedded in dashboards or websites, or be called via the API.
+    </p>
+{% endblock %}
+
+{% block content %}
+	<table class="table table-striped">
+	  <thead>
+	    <tr>
+	      <th>#</th>
+	      <th>First Name</th>
+	      <th>Last Name</th>
+	      <th>Username</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    <tr>
+	      <td>1</td>
+	      <td>Mark</td>
+	      <td>Otto</td>
+	      <td>@mdo</td>
+	    </tr>
+	    <tr>
+	      <td>2</td>
+	      <td>Jacob</td>
+	      <td>Thornton</td>
+	      <td>@fat</td>
+	    </tr>
+	    <tr>
+	      <td>3</td>
+	      <td>Larry</td>
+	      <td>the Bird</td>
+	      <td>@twitter</td>
+	    </tr>
+	  </tbody>
+	</table>
+    <div class="form-actions">
+        <a href="{{ uri_for("apps-new") }}" class="btn btn-inverse btn-large">{% trans %}Create an App{% endtrans %}</a>
+    </div>
+{% endblock %}
+
+{% block mediaJS %}
+<script type="text/javascript">
+    $().ready(function() {
+        $("#form_register").validate({
+            submitHandler: function(form) {
+                    form.submit();
+            },
+            rules: {
+                password: 'required',
+                c_password: {
+                    required: true,
+                    equalTo: '#password'
+                }
+            },
+            errorPlacement: function(error, element) {
+                element.parent().parent().addClass("error");
+                error.addClass("help-inline").appendTo( element.parent() );
+            }
+        });
+    });
+</script>
+{% endblock %}
+

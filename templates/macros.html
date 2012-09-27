@@ -1,0 +1,28 @@
+<!-- creates a form input field of the type specified.  
+	Note that in addition to the listed parameters, any set of kwargs can be passed and will appear as attributes on the html input element
+	type, class, value, placeholder are noteable kwargs for the input element -->
+{% macro input(form, name, label, type='text') -%}
+        <div class="control-group{% if getattr(form,name).errors %} error{% endif %}">
+                <label "control-label" for="{{ name }}">{{ label|safe }}{% if getattr(form,name).flags.required %}<span class="required">*</span>{% endif %}</label>
+                <div class="">
+                {{ getattr(form,name)(type=type, **kwargs)|safe }}
+                {% if getattr(form,name).errors %}
+                    {% for error in getattr(form,name).errors %}<label for="{{ name }}" class="error help-inline">{{ error }}</label>{% endfor %}
+                {% endif %}
+                </div>
+            </div>
+{%- endmacro %}
+
+<!-- renders federated login (openId and Oauth) login buttons -->
+{% macro federated_login(provider_info, provider_uris, enable_federated_login) -%}
+{% if enable_federated_login %}
+            <div id="trird_party_login" class="form-actions">
+                <h4>{% trans %}Sign in using:{% endtrans %}</h4>
+                <div class="social-login-icons">
+                    {% for p in provider_info if provider_uris[p] %}
+                    <a href="{{ provider_uris[p] }}" class="social-btn social-btn-{{ p }}" title="{{ p.label }}">Login {{ p.label }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+{% endif %}
+{%- endmacro %}
