@@ -33,6 +33,7 @@ twitter_consumer_key = 'sBhPXfyvmZzKzeGEPKVg'
 twitter_consumer_secret = 'KxFRgg0SaCyKk9p6iJOLue4M0uVoAfJc3v4MGicK7fs'
 
 # github login
+github_server = 'github.com'
 github_client_id = 'd43f79b4e7c21fa43454'
 github_client_secret = 'a64ddfdc29dcf0c7590147476014950bf160883f'
 

@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-	A real simple app for using webapp2 with auth and session.
-
-	It just covers the basics. Creating a user, login, logout
-	and a decorator for protecting certain handlers.
-
-    Routes are setup in routes.py and added in main.py
+TinyProbe User Classes.
 """
 # standard library imports
 import logging
@@ -25,13 +20,13 @@ from google.appengine.api import taskqueue
 import config
 import web.forms as forms
 import models.models as models
-from lib import utils, httpagentparser, captcha, twitter
+from lib import utils, httpagentparser, captcha
 from lib.basehandler import BaseHandler
 from lib.basehandler import user_required
 
 # social login
 from lib.github import github
-
+from lib.twitter import twitter
 
 class PreRegisterBaseHandler(BaseHandler):
     """
@@ -41,6 +36,7 @@ class PreRegisterBaseHandler(BaseHandler):
     def form(self):
         return forms.PreRegisterForm(self)
 
+
 class RegisterBaseHandler(BaseHandler):
     """
     Base class for handlers with registration and login forms.
@@ -48,6 +44,7 @@ class RegisterBaseHandler(BaseHandler):
     @webapp2.cached_property
     def form(self):
         return forms.RegisterForm(self)
+
 
 class SendEmailHandler(BaseHandler):
     """
@@ -121,6 +118,7 @@ class LoginHandler(BaseHandler):
                 self.add_message(message, 'error')
                 return self.redirect_to('login')
 
+            # REMOVE ME
             #check twitter association in session
             twitter_helper = twitter.TwitterAuth(self)
             twitter_association_data = twitter_helper.get_association_data()
@@ -165,11 +163,20 @@ class SocialLoginHandler(BaseHandler):
             message = _('Federated login is disabled.')
             self.add_message(message, 'warning')
             return self.redirect_to('login')
+
+        #OAuth Shizzle    
         callback_url = "%s/social_login/%s/complete" % (self.request.host_url, provider_name)
         
         if provider_name == "twitter":
             twitter_helper = twitter.TwitterAuth(self, redirect_uri=callback_url)
-            self.redirect(twitter_helper.auth_url())    
+            self.redirect( twitter_helper.auth_url() )
+
+        # github stores the callback URL in the app settings on their site, so we don't pass it here
+        # you can register a new app at https://github.com/settings/applications/
+        elif provider_name == "github":
+            scope = ['gist']
+            github_helper = github.GithubAuth(scope)
+            self.redirect( github_helper.get_authorize_url() )
             
         else:
             message = _('%s authentication is not yet implemented.' % provider_display_name)
@@ -187,6 +194,7 @@ class CallbackSocialLoginHandler(BaseHandler):
             message = _('Federated login is disabled.')
             self.add_message(message, 'warning')
             return self.redirect_to('login')
+
         if provider_name == "twitter":
             oauth_token = self.request.get('oauth_token')
             oauth_verifier = self.request.get('oauth_verifier')
@@ -213,8 +221,7 @@ class CallbackSocialLoginHandler(BaseHandler):
                 self.redirect_to('edit-profile')
             else:
                 # login with twitter
-                social_user = models.SocialUser.get_by_provider_and_uid('twitter',
-                    str(user_data['id']))
+                social_user = models.SocialUser.get_by_provider_and_uid('twitter', str(user_data['id']))
                 if social_user:
                     # Social user exists. Need authenticate related site account
                     user = social_user.user.get()
@@ -234,9 +241,13 @@ class CallbackSocialLoginHandler(BaseHandler):
                                 'Please sign in or create a TinyProbe account before continuing.')
                     self.add_message(message, 'warning')
                     self.redirect_to('login')
-            # Debug Callback information provided
-#            for k,v in user_data.items():
-#                print(k +":"+  v )
+
+        # association with github
+        # path is something like http://www.tinyprobe.com/social_login/github/
+        elif provider_name == "github":
+            logging.info("got a request")
+            self.redirect_to('home')
+
         # google, myopenid, yahoo OpenID Providers
         elif provider_name in models.SocialUser.open_id_providers():
             provider_display_name = models.SocialUser.PROVIDERS_INFO[provider_name]['label']
@@ -288,59 +299,12 @@ class CallbackSocialLoginHandler(BaseHandler):
                     logVisit.put()
                     self.redirect_to('home')
                 else:
-                    # Social user does not exist yet so create it with the federated identity provided (uid)
-                    # and create prerequisite user and log the user account in
-                    if models.SocialUser.check_unique_uid(provider_name, uid):
-                        # create user
-                        # Returns a tuple, where first value is BOOL.
-                        # If True ok, If False no new user is created
-                        # Assume provider has already verified email address
-                        # if email is provided so set activated to True
-                        auth_id = "%s:%s" % (provider_name, uid)
-                        if email:
-                            unique_properties = ['email']
-                            user_info = self.auth.store.user_model.create_user(
-                                auth_id, unique_properties, email=email,
-                                activated=True
-                            )
-                        else:
-                            user_info = self.auth.store.user_model.create_user(
-                                auth_id, activated=True
-                            )
-                        if not user_info[0]: #user is a tuple
-                            message = _('The account %s is already in use.' % provider_display_name)
-                            self.add_message(message, 'error')
-                            return self.redirect_to('register')
-
-                        user = user_info[1]
-
-                        # create social user and associate with user
-                        social_user = models.SocialUser(
-                            user = user.key,
-                            provider = provider_name,
-                            uid = uid
-                        )
-                        social_user.put()
-                        # authenticate user
-                        self.auth.set_session(self.auth.store.user_to_dict(user), remember=True)
-                        logVisit = models.LogVisit(
-                            user = user.key,
-                            uastring = self.request.user_agent,
-                            ip = self.request.remote_addr,
-                            timestamp = utils.get_date_time()
-                        )
-                        logVisit.put()
-                        self.redirect_to('home')
-
-                        message = _('%s association successfully added.' % provider_display_name)
-                        self.add_message(message, 'success')
-                        self.redirect_to('home')
-                    else:
-                        message = _('This %s account is already in use.' % provider_display_name)
-                        self.add_message(message, 'error')
+                    message = _('This OpenID based account is not associated with a TinyProbe account. '
+                                'Please sign in or create a TinyProbe account before continuing.')
+                    self.add_message(message, 'warning')
                     self.redirect_to('login')
         else:
-            message = _('This authentication method is not yet implemented.')
+            message = _('This authentication method is not yet implemented!')
             self.add_message(message, 'warning')
             self.redirect_to('login')
 
@@ -357,10 +321,10 @@ class DeleteSocialProviderHandler(BaseHandler):
             social_user = models.SocialUser.get_by_user_and_provider(user_info.key, provider_name)
             if social_user:
                 social_user.key.delete()
-                message = _('%s successfully disassociated.' % provider_name)
+                message = _('%s successfully disassociated.' % provider_name.title())
                 self.add_message(message, 'success')
             else:
-                message = _('Social account on %s not found for this user.' % provider_name)
+                message = _('Social account on %s not found for this user.' % provider_name.title())
                 self.add_message(message, 'error')
         self.redirect_to('edit-profile')
 
@@ -385,6 +349,7 @@ class LogoutHandler(BaseHandler):
             message = _("User is logged out, but there was an error on the redirection.")
             self.add_message(message, 'error')
             return self.redirect_to('home')
+
 
 class PreRegisterHandler(PreRegisterBaseHandler):
     def get(self):
@@ -427,6 +392,7 @@ class PreRegisterHandler(PreRegisterBaseHandler):
         message = _('Please check your email for an account activation token.  You can close this page if you like.')
         self.add_message(message, 'info')
         return self.redirect_to('preregister')
+
 
 class RegisterHandler(RegisterBaseHandler):
     """
@@ -898,21 +864,12 @@ class PasswordResetHandler(BaseHandler):
             _message = _('Wrong image verification code. Please try again.')
             self.add_message(_message, 'error')
             return self.redirect_to('password-reset')
-            #check if we got an email or username
-        email_or_username = str(self.request.POST.get('email_or_username')).lower().strip()
-        if utils.is_email_valid(email_or_username):
-            user = models.User.get_by_email(email_or_username)
-            _message = _("If the e-mail address you entered") + " (<strong>%s</strong>) " % email_or_username
-        else:
-            auth_id = "own:%s" % email_or_username
-            user = models.User.get_by_auth_id(auth_id)
-            _message = _("If the username you entered") + " (<strong>%s</strong>) " % email_or_username
-
-        _message = _message + _("is associated with an account in our records, you will receive "
-                                "an e-mail from us with instructions for resetting your password. "
-                                "<br>If you don't receive instructions within a minute or two, "
-                                "check your email's spam and junk filters, or ") +\
-                   '<a href="' + self.uri_for('contact') + '">' + _('contact us') + '</a> ' +  _("for further assistance.")
+        
+        # load the email address
+        email = str(self.request.POST.get('email')).lower().strip()
+        if utils.is_email_valid(email):
+            user = models.User.get_by_email(email)
+            _message = _("You should receive an email from us shortly with instructions for resetting your password.")
 
         if user is not None:
             user_id = user.get_id()
@@ -940,6 +897,7 @@ class PasswordResetHandler(BaseHandler):
                 })
             self.add_message(_message, 'success')
             return self.redirect_to('login')
+
         self.add_message(_message, 'warning')
         return self.redirect_to('password-reset')
 
@@ -1072,6 +1030,7 @@ class ShellHandler(BaseHandler):
     def post(self):
         self.get()
 
+
 class AppDetailHandler(BaseHandler):
     @user_required
     def get(self, app_id = None):
@@ -1088,6 +1047,8 @@ class AppListHandler(BaseHandler):
     def get(self):
         params = {}
         return self.render_template('app/app_list.html', **params)
+    # we'll need to pull gists from the user's github account to filter and list them
+    # the idea is to re-log them into github if our token is expired and get a new one!
 
 class AppCreateHandler(BaseHandler):
     @user_required
@@ -1120,8 +1081,23 @@ class AppCreateHandler(BaseHandler):
         return forms.AppForm(self)
 
 
+class ProductHandler(BaseHandler):
+    def get(self, product_page=''):
+        params = {"product_page": product_page}
+
+        if product_page == 'pricing':
+            return self.render_template('product/pricing.html', **params)
+        else:
+            return self.render_template('home.html', **params)
 
 
+class CompanyHandler(BaseHandler):
+    def get(self, product_page=''):
+        params = {"company_page": company_page}
+        if company_page == 'pricing':
+            return self.render_template('company/pricing.html', **params)
+        else:
+            return self.render_template('home.html', **params)
 
 
 

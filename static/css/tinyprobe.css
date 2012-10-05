@@ -63,12 +63,40 @@ a.btn {
 	text-decoration: none;
 }
 
-.close {
-	font-color: white;
+a.close {
+	color: white;
+}
+
+a.close:visited {
+	color: white !important;
+}
+
+a.close:active {
+	color: white;
+}
+
+a.close:hover {
+	color: white;
+}
+
+a.close:link {
+	color: white;
+}
+
+.alert {
+	border: none;
 }
 
 .alert-success {
-	background-color: #8D8D8D;
+	background-color: #000;
+}
+
+.alert-warning {
+	background-color: #000;
+}
+
+.alert-info {
+	background-color: #000;
 }
 
 #third_party_login .social-login-icons a.social-btn {
@@ -312,5 +340,6 @@ footer ul {
 .recaptchatable #recaptcha_response_field {
 	width: 136px !important;
 	font-size: 11pt;
+	height: 20px !important;
 }
 
