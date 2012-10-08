@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-TinyProbe User Classes.
+How do you handle TinyProbe?
 """
 # standard library imports
-import logging
+import logging, os
 import urllib, urllib2, hashlib, json
 from lib.i18n import get_territory_from_ip
 
@@ -51,14 +51,39 @@ class SendEmailHandler(BaseHandler):
     Core Handler for sending Emails
     Use with TaskQueue
     """
-
     def post(self):
+
+        from google.appengine.api import mail, app_identity
+        from google.appengine.api.datastore_errors import BadValueError
+        from google.appengine.runtime import apiproxy_errors
+        import config
+        from models import models
+
         to = self.request.get("to")
         subject = self.request.get("subject")
         body = self.request.get("body")
         sender = self.request.get("sender")
 
-        utils.send_email(to, subject, body, sender)
+        if sender != '' or not utils.is_email_valid(sender):
+            if utils.is_email_valid(config.contact_sender):
+                sender = config.contact_sender
+            else:
+                app_id = app_identity.get_application_id()
+                sender = "%s <no-reply@%s.appspotmail.com>" % (app_id, app_id)
+
+        try:
+            logEmail = models.LogEmail(
+                sender = sender,
+                to = to,
+                subject = subject,
+                body = body,
+                when = utils.get_date_time("datetimeProperty")
+            )
+            logEmail.put()
+        except (apiproxy_errors.OverQuotaError, BadValueError):
+            logging.error("Error saving Email Log in datastore")
+
+        mail.send_mail(sender, to, subject, body)
 
 
 class LoginHandler(BaseHandler):
@@ -174,7 +199,7 @@ class SocialLoginHandler(BaseHandler):
         # github stores the callback URL in the app settings on their site, so we don't pass it here
         # you can register a new app at https://github.com/settings/applications/
         elif provider_name == "github":
-            scope = ['gist']
+            scope = 'gist'
             github_helper = github.GithubAuth(scope)
             self.redirect( github_helper.get_authorize_url() )
             
@@ -245,7 +270,18 @@ class CallbackSocialLoginHandler(BaseHandler):
         # association with github
         # path is something like http://www.tinyprobe.com/social_login/github/
         elif provider_name == "github":
-            logging.info("got a request")
+            # get our request code back from the social login handler above
+            code = self.request.get('code')
+
+            # create our github auth object (again)
+            scope = 'gist'
+            github_helper = github.GithubAuth(scope)
+
+            # retrieve the access token using the code and auth object
+            access_token = github_helper.get_access_token(code)
+            logging.info(access_token)
+
+            self.add_message(access_token, 'warning')
             self.redirect_to('home')
 
         # google, myopenid, yahoo OpenID Providers
@@ -387,11 +423,15 @@ class PreRegisterHandler(PreRegisterBaseHandler):
                 'subject' : subject,
                 'body' : body,
                 })
-            logging.info(body)
 
         message = _('Please check your email for an account activation token.  You can close this page if you like.')
         self.add_message(message, 'info')
-        return self.redirect_to('preregister')
+
+        # redirect to signup page if we're running in dev
+        if os.environ['SERVER_SOFTWARE'].startswith('Dev'):
+            return self.redirect('/register/%s/' % encoded_email)
+        else:
+            return self.redirect_to('preregister')
 
 
 class RegisterHandler(RegisterBaseHandler):

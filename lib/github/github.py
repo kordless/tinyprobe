@@ -11,6 +11,7 @@ class GithubAuth(object):
         self.scope = scope
         self.access_token_url = 'https://%s/login/oauth/access_token' % config.github_server
         self.authorization_url = 'https://%s/login/oauth/authorize' % config.github_server
+        self.redirect_uri = config.github_redirect_uri
         self.client_key = config.github_client_id
         self.client_secret = config.github_client_secret
 
@@ -24,6 +25,11 @@ class GithubAuth(object):
 
     # wrap get_authorize_url()
     def get_authorize_url(self):
-        auth_url = self.auth.get_authorize_url()
+        auth_url = self.auth.get_authorize_url(scope=self.scope)
         logging.info("auth url is: %s" % auth_url)
         return auth_url
+
+    def get_access_token(self, code):
+        data = dict(code=code, redirect_uri=self.redirect_uri)
+        self.auth.get_access_token('POST', data=data).content['access_token']
+        logging.info("and we're back")

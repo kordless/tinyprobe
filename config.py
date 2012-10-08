@@ -1,3 +1,5 @@
+import os, logging
+
 app_name = "Tiny Probe"
 
 webapp2_config = {}
@@ -25,6 +27,8 @@ locales = ['en_US']
 contact_sender = "kordless@gmail.com"
 contact_recipient = "kordless@gmail.com"
 
+# Password AES Encryption Parameters
+aes_key = "9c85e9bbb92735362d1d59143ea9d50c"
 salt = "5758c08d38fe9ff725033600429cde55"
 
 # get your own consumer key and consumer secret by registering at https://dev.twitter.com/apps
@@ -32,10 +36,19 @@ salt = "5758c08d38fe9ff725033600429cde55"
 twitter_consumer_key = 'sBhPXfyvmZzKzeGEPKVg'
 twitter_consumer_secret = 'KxFRgg0SaCyKk9p6iJOLue4M0uVoAfJc3v4MGicK7fs'
 
-# github login
-github_server = 'github.com'
-github_client_id = 'd43f79b4e7c21fa43454'
-github_client_secret = 'a64ddfdc29dcf0c7590147476014950bf160883f'
+if os.environ['SERVER_SOFTWARE'].startswith('Dev'):
+	# github login for TinyProbe dev
+	logging.info("yo, i'm using dev version of app on github.com!")
+	github_server = 'github.com'
+	github_redirect_uri = 'http://localhost:8101/social_login/github/complete'
+	github_client_id = '5a3124e4d71e2ce8741c'
+	github_client_secret = '1b8488e2022e214f9c2bb2c20ac1f007201d5986'
+else:
+	# going production level
+	github_server = 'github.com'
+	github_redirect_uri = 'http://www.tinyprobe.com/social_login/github/complete'
+	github_client_id = 'd43f79b4e7c21fa43454'
+	github_client_secret = 'a64ddfdc29dcf0c7590147476014950bf160883f'
 
 # get your own recaptcha keys by registering at www.google.com/recaptcha
 captcha_public_key = "6LeZidUSAAAAAH4URz_h0kKl-NDciRnE3Nw8ajJd"

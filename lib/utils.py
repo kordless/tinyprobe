@@ -1,62 +1,25 @@
 
-import Cookie
-import hashlib
-import logging
 import os
-import random
 import re
+import random
+import hashlib
 import string
 import unicodedata
 from datetime import datetime, timedelta
-from google.appengine.api import mail, app_identity
-from google.appengine.api.datastore_errors import BadValueError
-from google.appengine.runtime import apiproxy_errors
+import Cookie
+
+from Crypto.Cipher import AES
+
 import config
-from models import models
 
 def random_string(size=6, chars=string.ascii_letters + string.digits):
     """ Generate random string """
     return ''.join(random.choice(chars) for _ in range(size))
 
-def send_email(to, subject, body, sender=''):
-    """
-        Core function to send emails
-        Don't call it directly
-        Use it calling to the Handler SendEmailHandler with taskqueue
-
-        email_url = self.uri_for('taskqueue-send-email')
-        taskqueue.add(url = email_url, params={
-            'to': [[contact_recipient]],
-            'subject' : [[subject]],
-            'body' : [[body]],
-            })
-
-    """
-
-    if sender != '' or not is_email_valid(sender):
-        if is_email_valid(config.contact_sender):
-            sender = config.contact_sender
-        else:
-            app_id = app_identity.get_application_id()
-            sender = "%s <no-reply@%s.appspotmail.com>" % (app_id, app_id)
-
-    try:
-        logEmail = models.LogEmail(
-            sender = sender,
-            to = to,
-            subject = subject,
-            body = body,
-            when = get_date_time("datetimeProperty")
-        )
-        logEmail.put()
-    except (apiproxy_errors.OverQuotaError, BadValueError):
-        logging.error("Error saving Email Log in datastore")
-
-    mail.send_mail(sender, to, subject, body)
-
-def encrypt(plaintext, salt="", sha="512"):
+def hashing(plaintext, salt="", sha="512"):
     """ Returns the encrypted hexdigest of a plaintext and salt"""
 
+    # Hashing
     if sha == "1":
         phrase = hashlib.sha1()
     elif sha == "256":
@@ -64,7 +27,24 @@ def encrypt(plaintext, salt="", sha="512"):
     else:
         phrase = hashlib.sha512()
     phrase.update("%s@%s" % (plaintext, salt))
-    return phrase.hexdigest()
+    phrase_digest = phrase.hexdigest()
+
+    # Encryption
+    mode = AES.MODE_CBC
+
+    # We can not generate random initialization vector because is difficult to retrieve them later without knowing
+    # a priori the hash to match. We take 16 bytes from the hexdigest to make the vectors different for each hashed
+    # plaintext.
+    iv = phrase_digest[:16]
+    encryptor = AES.new(config.aes_key, mode,iv)
+    ciphertext = [encryptor.encrypt(chunk) for chunk in chunks(phrase_digest, 16)]
+    return ''.join(ciphertext)
+
+def chunks(list, size):
+    """ Yield successive sized chunks from list.
+    """
+    for i in xrange(0, len(list), size):
+        yield list[i:i+size]
 
 def encode(plainText):
     num = 0
@@ -144,6 +124,7 @@ def is_alphanumeric(field):
     return 0
 
 def get_device(cls):
+    # TODO: Remove this function
     uastring = cls.request.user_agent or 'unknown'
     is_mobile = (("Mobile" in uastring and "Safari" in uastring) or\
                  ("Windows Phone OS" in uastring and "IEMobile" in uastring) or\
@@ -219,6 +200,7 @@ def slugify(value):
     value = unicode(_slugify_strip_re.sub('', value).strip().lower())
     return _slugify_hyphenate_re.sub('-', value)
 
+# TODO: Use locale (Babel)
 COUNTRIES = [
     ("", ""),
     ("AF", "Afghanistan"),

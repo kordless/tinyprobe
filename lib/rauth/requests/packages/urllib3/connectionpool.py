@@ -6,6 +6,7 @@
 
 import logging
 import socket
+import ssl
 
 from socket import timeout as SocketTimeout
 
@@ -79,9 +80,10 @@ class VerifiedHTTPSConnection(HTTPSConnection):
 
     def set_cert(self, key_file=None, cert_file=None,
                  cert_reqs='CERT_NONE', ca_certs=None):
+        import ssl
         ssl_req_scheme = {
-            'CERT_NONE': ssl.CERT_NONE,
             'CERT_OPTIONAL': ssl.CERT_OPTIONAL,
+            'CERT_NONE': ssl.CERT_NONE, 
             'CERT_REQUIRED': ssl.CERT_REQUIRED
         }
 

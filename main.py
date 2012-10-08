@@ -21,6 +21,15 @@ import webapp2
 import config
 import routes
 
+"""
+import ssl
+import logging
+import sys
+logging.info(sys.version)
+logging.info(os.environ)
+logging.info("cert_none is %s" % CERT_NONE)
+"""
+
 from lib.basehandler import handle_error
 
 app = webapp2.WSGIApplication(debug = os.environ['SERVER_SOFTWARE'].startswith('Dev'), config=config.webapp2_config)
