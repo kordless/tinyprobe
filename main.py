@@ -13,10 +13,14 @@
 # limitations under the License.
 #
 
-__author__ = 'Rodrigo Augosto (@coto)'
-__website__ = 'www.beecoss.com'
+__author__ = 'Kord Campbell'
+__website__ = 'http://www.tinyprobe.com'
 
-import os
+import os,sys
+
+# install third party libraries
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib/externals'))
+
 import webapp2
 import config
 import routes

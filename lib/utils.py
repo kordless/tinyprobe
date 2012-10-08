@@ -8,7 +8,7 @@ import unicodedata
 from datetime import datetime, timedelta
 import Cookie
 
-from boilerplate import config
+import config
 
 def random_string(size=6, chars=string.ascii_letters + string.digits):
     """ Generate random string """
