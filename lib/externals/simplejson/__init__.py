@@ -111,7 +111,7 @@ try:
     import simplejson
     if (simplejson.__version__.split('.') >= __version__.split('.') or
             hasattr(simplejson, '_speedups')):
-        from simplejson import *
+        from implejson import *
         use_system_version = True
 except ImportError:
     pass

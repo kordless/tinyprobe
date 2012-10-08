@@ -46,7 +46,7 @@ import socket
 
 # Find a JSON parser
 try:
-    import simplejson as json
+    import libs.externals.simplejson as json
 except ImportError:
     try:
         from django.utils import simplejson as json
