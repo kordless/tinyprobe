@@ -30,6 +30,7 @@ import urlparse
 import hmac
 import binascii
 import httplib2
+import logging
 
 try:
     from urlparse import parse_qs
@@ -856,3 +857,5 @@ class SignatureMethod_PLAINTEXT(SignatureMethod):
     def sign(self, request, consumer, token):
         key, raw = self.signing_base(request, consumer, token)
         return raw
+
+

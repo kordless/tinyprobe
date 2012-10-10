@@ -192,6 +192,7 @@ class SocialLoginHandler(BaseHandler):
         #OAuth Shizzle    
         callback_url = "%s/social_login/%s/complete" % (self.request.host_url, provider_name)
         
+        # twitter madness (seriously, what's the deal with them?)
         if provider_name == "twitter":
             twitter_helper = twitter.TwitterAuth(self, redirect_uri=callback_url)
             self.redirect( twitter_helper.auth_url() )
@@ -202,7 +203,7 @@ class SocialLoginHandler(BaseHandler):
             scope = 'gist'
             github_helper = github.GithubAuth(scope)
             self.redirect( github_helper.get_authorize_url() )
-            
+
         else:
             message = _('%s authentication is not yet implemented.' % provider_display_name)
             self.add_message(message, 'warning')
@@ -220,14 +221,15 @@ class CallbackSocialLoginHandler(BaseHandler):
             self.add_message(message, 'warning')
             return self.redirect_to('login')
 
+        # callback handler for twitter oauth
         if provider_name == "twitter":
             oauth_token = self.request.get('oauth_token')
             oauth_verifier = self.request.get('oauth_verifier')
             twitter_helper = twitter.TwitterAuth(self)
-            user_data = twitter_helper.auth_complete(oauth_token,
-                oauth_verifier)
+            user_data = twitter_helper.auth_complete(oauth_token, oauth_verifier)
+            logging.info(user_data)
             if self.user:
-                # new association with twitter
+                # user is already logged in so we set a new association with twitter
                 user_info = models.User.get_by_id(long(self.user_id))
                 if models.SocialUser.check_unique(user_info.key, 'twitter', str(user_data['id'])):
                     social_user = models.SocialUser(
@@ -245,7 +247,7 @@ class CallbackSocialLoginHandler(BaseHandler):
                     self.add_message(message, 'error')
                 self.redirect_to('edit-profile')
             else:
-                # login with twitter
+                # user is not logged in, but is trying to log in via twitter
                 social_user = models.SocialUser.get_by_provider_and_uid('twitter', str(user_data['id']))
                 if social_user:
                     # Social user exists. Need authenticate related site account
@@ -260,15 +262,14 @@ class CallbackSocialLoginHandler(BaseHandler):
                     logVisit.put()
                     self.redirect_to('home')
                 else:
-                    # Social user does not exists. Need show login and registration forms
+                    # Social user does not exists. Need show login and registration forms!
                     twitter_helper.save_association_data(user_data)
                     message = _('This Twitter account is not associated with a TinyProbe account. '
                                 'Please sign in or create a TinyProbe account before continuing.')
                     self.add_message(message, 'warning')
                     self.redirect_to('login')
 
-        # association with github
-        # path is something like http://www.tinyprobe.com/social_login/github/
+        # callback handler for github oauth
         elif provider_name == "github":
             # get our request code back from the social login handler above
             code = self.request.get('code')
@@ -279,10 +280,48 @@ class CallbackSocialLoginHandler(BaseHandler):
 
             # retrieve the access token using the code and auth object
             access_token = github_helper.get_access_token(code)
-            logging.info(access_token)
+            user_data = github_helper.get_user_info(access_token)
 
-            self.add_message(access_token, 'warning')
-            self.redirect_to('home')
+            if self.user:
+                # user is already logged in so we set a new association with twitter
+                user_info = models.User.get_by_id(long(self.user_id))
+                if models.SocialUser.check_unique(user_info.key, 'github', str(user_data['login'])):
+                    social_user = models.SocialUser(
+                        user = user_info.key,
+                        provider = 'github',
+                        uid = str(user_data['login']),
+                        extra_data = user_data
+                    )
+                    social_user.put()
+
+                    message = _('Github association added.')
+                    self.add_message(message, 'success')
+                else:
+                    message = _('This Github account is already in use.')
+                    self.add_message(message, 'error')
+                self.redirect_to('edit-profile')
+            else:
+                # user is not logged in, but is trying to log in via github
+                social_user = models.SocialUser.get_by_provider_and_uid('github', str(user_data['login']))
+                if social_user:
+                    # Social user exists. Need authenticate related site account
+                    user = social_user.user.get()
+                    self.auth.set_session(self.auth.store.user_to_dict(user), remember=True)
+                    logVisit = models.LogVisit(
+                        user = user.key,
+                        uastring = self.request.user_agent,
+                        ip = self.request.remote_addr,
+                        timestamp = utils.get_date_time()
+                    )
+                    logVisit.put()
+                    self.redirect_to('home')
+                else:
+                    # Social user does not exists. Need show login and registration forms!
+                    github_helper.save_association_data(user_data)
+                    message = _('This Github account is not associated with a TinyProbe account. '
+                                'Please sign in or create a TinyProbe account before continuing.')
+                    self.add_message(message, 'warning')
+                    self.redirect_to('login')
 
         # google, myopenid, yahoo OpenID Providers
         elif provider_name in models.SocialUser.open_id_providers():
@@ -372,8 +411,7 @@ class LogoutHandler(BaseHandler):
 
     def get(self):
         if self.user:
-            message = _("You've signed out successfully. Warning: Please clear all cookies and logout "
-                        "of OpenId providers too if you logged in on a public computer.")
+            message = _("You've been logged out.  Remember to log out of other providers as well for saftey's sake!")
             self.add_message(message, 'info')
 
         self.auth.unset_session()
@@ -608,10 +646,8 @@ class EditProfileHandler(BaseHandler):
             logging.info("logged in")
         if self.user:
             user_info = models.User.get_by_id(long(self.user_id))
-            logging.info(user_info.name)
             self.form.username.data = user_info.username
             self.form.name.data = user_info.name
-            logging.info(user_info.name)
             self.form.last_name.data = user_info.last_name
             self.form.country.data = user_info.country
             providers_info = user_info.get_social_providers_info()

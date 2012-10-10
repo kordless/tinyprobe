@@ -1,35 +1,81 @@
+#!/usr/bin/env python
+##
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+__author__ = 'Kord Campbell'
+__website__ = 'http://www.tinyprobe.com'
+
 import config
-from lib.rauth.service import OAuth2Service
-from urllib2 import  urlopen
-import json
+import lib.github.oauth_client as oauth2
+import simplejson
 import logging
 
 # Github OAuth Implementation
 class GithubAuth(object):
     
     def __init__(self, scope):
-        self.scope = scope
-        self.access_token_url = 'https://%s/login/oauth/access_token' % config.github_server
-        self.authorization_url = 'https://%s/login/oauth/authorize' % config.github_server
-        self.redirect_uri = config.github_redirect_uri
-        self.client_key = config.github_client_id
-        self.client_secret = config.github_client_secret
 
-        self.auth = OAuth2Service(
-            name = 'github',
-            authorize_url = self.authorization_url,
-            access_token_url = self.access_token_url,
-            consumer_key = self.client_key,
-            consumer_secret = self.client_secret
+        # load github shizzle from config.py
+        self.oauth_settings = {
+            'client_id': config.github_client_id,
+            'client_secret': config.github_client_secret,
+            'access_token_url': 'https://%s/login/oauth/access_token' % config.github_server,
+            'authorization_url': 'https://%s/login/oauth/authorize' % config.github_server,
+            'redirect_url': '%s' % config.github_redirect_uri,
+            'scope': '%s' % scope
+        }
+
+    # get our auth url and return to login handler
+    def get_authorize_url(self):
+        oauth_client = oauth2.Client2( 
+            self.oauth_settings['client_id'], 
+            self.oauth_settings['client_secret'], 
+            self.oauth_settings['authorization_url'] 
+        )
+        
+        authorization_url = oauth_client.authorization_url( 
+            redirect_uri=self.oauth_settings['redirect_url'],  
+            params={'scope': self.oauth_settings['scope']}
         )
 
-    # wrap get_authorize_url()
-    def get_authorize_url(self):
-        auth_url = self.auth.get_authorize_url(scope=self.scope)
-        logging.info("auth url is: %s" % auth_url)
-        return auth_url
+        return authorization_url
 
     def get_access_token(self, code):
-        data = dict(code=code, redirect_uri=self.redirect_uri)
-        self.auth.get_access_token('POST', data=data).content['access_token']
-        logging.info("and we're back")
+        oauth_client = oauth2.Client2(
+            self.oauth_settings['client_id'],
+            self.oauth_settings['client_secret'],
+            self.oauth_settings['access_token_url']
+        )
+        
+        data = oauth_client.access_token(code, self.oauth_settings['redirect_url'])
+        
+        access_token = data.get('access_token')
+
+        return access_token
+
+
+    def get_user_info(self, access_token):
+
+        oauth_client = oauth2.Client2(
+            self.oauth_settings['client_id'],
+            self.oauth_settings['client_secret'],
+            self.oauth_settings['access_token_url']
+        )
+
+        (headers, body) = oauth_client.request(
+            'https://api.github.com/user',
+            access_token=access_token,
+            token_param='access_token'
+        )
+        return simplejson.loads(body)
