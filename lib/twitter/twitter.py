@@ -1,5 +1,4 @@
-from lib.oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest, \
-                   SignatureMethod_HMAC_SHA1
+from lib.twitter.oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest, SignatureMethod_HMAC_SHA1
 from urllib2 import Request, urlopen
 import simplejson
 import config

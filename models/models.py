@@ -75,7 +75,7 @@ class SocialUser(ndb.Model):
     PROVIDERS_INFO = { # uri is for OpenID only (not OAuth)
         'google': {'name': 'google', 'label': 'Google', 'uri': 'gmail.com'},
         'github': {'name': 'github', 'label': 'Github', 'uri': ''},
-        'twitter': {'name': 'twitter', 'label': 'Twitter', 'uri': ''},
+        #'twitter': {'name': 'twitter', 'label': 'Twitter', 'uri': ''},
     }
 
     user = ndb.KeyProperty(kind=User)
