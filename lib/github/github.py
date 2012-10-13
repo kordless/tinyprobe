@@ -21,10 +21,11 @@ import lib.github.oauth_client as oauth2
 import simplejson
 import logging
 
+
 # Github OAuth Implementation
 class GithubAuth(object):
     
-    def __init__(self, scope):
+    def __init__(self, scope, next_page=''):
 
         # load github shizzle from config.py
         self.oauth_settings = {
@@ -33,7 +34,7 @@ class GithubAuth(object):
             'access_token_url': 'https://%s/login/oauth/access_token' % config.github_server,
             'authorization_url': 'https://%s/login/oauth/authorize' % config.github_server,
             'redirect_url': '%s' % config.github_redirect_uri,
-            'scope': '%s' % scope
+            'scope': '%s' % scope,
         }
 
     # get our auth url and return to login handler
@@ -79,3 +80,6 @@ class GithubAuth(object):
             token_param='access_token'
         )
         return simplejson.loads(body)
+
+
+

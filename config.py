@@ -56,6 +56,9 @@ captcha_private_key = "6LeZidUSAAAAAI1L48D6X2YKToFCmCpXf8VyCHvK"
 
 google_analytics_code = "UA-34233674-1"
 
+# name to use to ID TinyProbe gists
+gist_manifest_name = 'tinyprobe.manifest'
+
 error_templates = {
     403: 'errors/default_error.html',
     404: 'errors/default_error.html',

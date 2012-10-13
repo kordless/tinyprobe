@@ -48,7 +48,7 @@ class Error(RuntimeError):
     def __str__(self):
         return self._message
 
-        
+
 # class added by github guys for their example at https://gist.github.com/e3fbd47fbb7ee3c626bb
 class Client2(object):
     """Client for OAuth 2.0 draft spec
@@ -200,5 +200,4 @@ class Client2(object):
             args[token_param] = access_token
 
         uri = '%s?%s' % (base_uri, urllib.urlencode(args))
-
         return self.http.request(uri, method=method, body=body, headers=headers)

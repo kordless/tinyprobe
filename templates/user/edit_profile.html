@@ -17,8 +17,8 @@
         <fieldset>
             <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
             {{ macros.input(form, "username", _("Username"), placeholder=_("Enter your")+" "+_("Username"), class="input-xlarge focused required") }}
-            {{ macros.input(form, "name", _("Name"), placeholder=_("Enter your")+" "+_("Name"), class="input-xlarge focused") }}
-            {{ macros.input(form, "last_name", _("Last Name"), placeholder=_("Enter your")+" "+_("Last Name"), class="input-xlarge focused") }}
+            {{ macros.input(form, "name", _("First Name"), placeholder=_("Enter your")+" "+_("first name"), class="input-xlarge focused") }}
+            {{ macros.input(form, "last_name", _("Last Name"), placeholder=_("Enter your")+" "+_("last Name"), class="input-xlarge focused") }}
             {{ macros.input(form, "company", _("Company"), placeholder=_("Where you work"), class="input-xlarge focused") }}
             {{ macros.input(form, "country", _("Country")) }}
 

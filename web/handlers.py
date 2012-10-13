@@ -5,7 +5,7 @@ How do you handle TinyProbe?
 """
 # standard library imports
 import logging, os
-import urllib, urllib2, hashlib, json
+import urllib, urllib2, hashlib, json, httplib2
 from lib.i18n import get_territory_from_ip
 
 # related third party imports
@@ -15,6 +15,7 @@ from webapp2_extras.auth import InvalidAuthIdError, InvalidPasswordError
 from webapp2_extras.i18n import gettext as _
 from webapp2_extras.appengine.auth.models import Unique
 from google.appengine.api import taskqueue
+import yaml
 
 # local application/library specific imports
 import config
@@ -279,27 +280,45 @@ class CallbackSocialLoginHandler(BaseHandler):
             github_helper = github.GithubAuth(scope)
 
             # retrieve the access token using the code and auth object
-            access_token = github_helper.get_access_token(code)
-            user_data = github_helper.get_user_info(access_token)
-
+            try:
+                access_token = github_helper.get_access_token(code)
+                user_data = github_helper.get_user_info(access_token)
+            except:
+                message = _('An error was encountered while exchanging tokens with Github.')
+                self.add_message(message, 'error')
+                self.redirect_to('edit-profile')
+                return
+            
             if self.user:
-                # user is already logged in so we set a new association with twitter
+                # user is already logged in so we set a new association with github
                 user_info = models.User.get_by_id(long(self.user_id))
                 if models.SocialUser.check_unique(user_info.key, 'github', str(user_data['login'])):
                     social_user = models.SocialUser(
                         user = user_info.key,
                         provider = 'github',
                         uid = str(user_data['login']),
+                        access_token = access_token,
                         extra_data = user_data
                     )
                     social_user.put()
 
-                    message = _('Github association added.')
+                    message = _('The TinyProbe application has been added to your Github account.')
                     self.add_message(message, 'success')
                 else:
-                    message = _('This Github account is already in use.')
+                    message = _('This Github account is already in use, perhaps with another account.')
                     self.add_message(message, 'error')
-                self.redirect_to('edit-profile')
+
+                # check to see if we are headed anywhere else besides the profile page
+                next_page = utils.read_cookie(self, 'oauth_return_url')
+
+                # try out what we found or redirect to profile if it's a bad value
+                if next_page:
+                    try:
+                        self.redirect_to(next_page)
+                    except:
+                        self.redirect_to('edit-profile')
+                else:
+                    self.redirect_to('edit-profile')
             else:
                 # user is not logged in, but is trying to log in via github
                 social_user = models.SocialUser.get_by_provider_and_uid('github', str(user_data['login']))
@@ -1118,13 +1137,53 @@ class AppDetailHandler(BaseHandler):
         return forms.AppForm(self)
 
 
-class AppListHandler(BaseHandler):
+class AppPublicHandler(BaseHandler):
     @user_required
     def get(self):
-        params = {}
-        return self.render_template('app/app_list.html', **params)
+        # serve all public apps
+        return
+    
+class AppListHandler(BaseHandler):
     # we'll need to pull gists from the user's github account to filter and list them
     # the idea is to re-log them into github if our token is expired and get a new one!
+
+    @user_required
+    def get(self):
+        # pull the github token out of the social user db
+        user_info = models.User.get_by_id(long(self.user_id))
+        social_user = models.SocialUser.get_by_user_and_provider(user_info.key, 'github')
+
+        # what do we do if we don't have a token or association?  auth 'em!
+        if not social_user:
+            scope = 'gist'
+            # drop a short lived cookie so we know where to come back to when we're done auth'ing
+            utils.write_cookie(self, 'oauth_return_url', 'apps', '/', 15)
+            github_helper = github.GithubAuth(scope)
+            self.redirect( github_helper.get_authorize_url() )
+            return
+        else:
+            gists = models.App.get_user_gists(social_user.uid, social_user.access_token)
+
+            # temporary until we get syncing running
+            # scan for a manifest files then parse them
+            apps = []
+            for gist in gists:
+                tp_app_detect = False
+                for appfile in gist['files']:
+                    # test for the occurrence of a tinyprobe app in the user's list of gists
+                    if appfile == config.gist_manifest_name:
+                        try:
+                            # grab the raw file and parse it for yaml bits
+                            h = httplib2.Http()
+                            resp, content = h.request(gist['files'][appfile]['raw_url'])
+                            manifest = yaml.load(content) 
+                            apps.append({'name': manifest['name'], 'description': manifest['description'], 'icon': 'None', 'url': gist['html_url']})
+                        except:
+                            apps.append({'name': 'Unknown', 'description': 'This app has manifest errors!', 'icon': 'None', 'url': gist['html_url']})
+            
+            params = {'apps': apps}
+            return self.render_template('app/app_list.html', **params)
+
 
 class AppCreateHandler(BaseHandler):
     @user_required

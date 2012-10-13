@@ -1,6 +1,7 @@
 from webapp2_extras.appengine.auth.models import User
 from google.appengine.ext import ndb
-
+import urllib, httplib2, simplejson
+import logging
 
 class User(User):
     """
@@ -36,9 +37,8 @@ class User(User):
     def get_social_providers_names(self):
         social_user_objects = SocialUser.get_by_user(self.key)
         result = []
-#        import logging
         for social_user_object in social_user_objects:
-#            logging.error(social_user_object.extra_data['screen_name'])
+            # logging.error(social_user_object.extra_data['screen_name'])
             result.append(social_user_object.provider)
         return result
 
@@ -75,15 +75,13 @@ class SocialUser(ndb.Model):
     PROVIDERS_INFO = { # uri is for OpenID only (not OAuth)
         'google': {'name': 'google', 'label': 'Google', 'uri': 'gmail.com'},
         'github': {'name': 'github', 'label': 'Github', 'uri': ''},
-        'twitter': {'name': 'twitter', 'label': 'Twitter', 'uri': ''},         
-        # 'facebook': {'name': 'facebook', 'label': 'Facebook', 'uri': ''},
-        # 'linkedin': {'name': 'linkedin', 'label': 'LinkedIn', 'uri': ''},
-        # 'myopenid': {'name': 'myopenid', 'label': 'MyOpenid', 'uri': 'myopenid.com'},
+        'twitter': {'name': 'twitter', 'label': 'Twitter', 'uri': ''},
     }
 
     user = ndb.KeyProperty(kind=User)
     provider = ndb.StringProperty()
     uid = ndb.StringProperty()
+    access_token = ndb.StringProperty()
     extra_data = ndb.JsonProperty()
 
     @classmethod
@@ -128,13 +126,27 @@ class SocialUser(ndb.Model):
 class App(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
-    created_by = ndb.KeyProperty(kind=User)
-    appname = ndb.StringProperty()
-    appurl = ndb.StringProperty()
+    author = ndb.KeyProperty(kind=User)
+    app_name = ndb.StringProperty()
+    app_gist_id = ndb.StringProperty()
     activated = ndb.BooleanProperty(default=True)
+    public = ndb.BooleanProperty(default=True)
 
     @classmethod
     def get_public(cls):
         pass
 
+
+    # Github Gist Calls
+    @classmethod
+    def get_user_gists(self, github_user, access_token):
+        params = {'access_token': access_token}
+        base_uri = 'https://api.github.com/users/%s/gists' % github_user
+        uri = '%s?%s' % (base_uri, urllib.urlencode(params))
+        
+        # request data from github gist API
+        http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
+        (headers, body) = http.request(uri, method='GET', body=None, headers=None)
+
+        return simplejson.loads(body)
 

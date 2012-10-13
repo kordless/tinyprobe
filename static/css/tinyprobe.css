@@ -1,4 +1,4 @@
-html, body {
+   html, body {
 	height: 100%;
 	vertical-align: baseline;
 	padding-top: 0px;
@@ -88,15 +88,21 @@ a.close:link {
 }
 
 .alert-success {
-	background-color: #000;
+	color: #EEE;
+	background-color: #444;
+	border-color: #DDD;
 }
 
 .alert-warning {
-	background-color: #000;
+	color: #EEE;
+	background-color: #444;
+	border-color: #DDD;
 }
 
 .alert-info {
-	background-color: #000;
+	color: #EEE;
+	background-color: #444;
+	border-color: #DDD;
 }
 
 #third_party_login .social-login-icons a.social-btn {
