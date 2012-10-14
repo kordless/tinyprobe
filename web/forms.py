@@ -30,7 +30,7 @@ class BaseForm(Form):
 
 class AppForm(BaseForm):
     appname = fields.TextField(_('Appname'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)], id='appname')
-    appurl = fields.TextField(_('AppURL'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)], id='appurl')
+    appurl = fields.TextField(_('Appdescription'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)], id='appdescription')
     pass
 
 class CurrentPasswordMixin(BaseForm):

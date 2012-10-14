@@ -58,6 +58,7 @@ google_analytics_code = "UA-34233674-1"
 
 # name to use to ID TinyProbe gists
 gist_manifest_name = 'tinyprobe.manifest'
+gist_icon_name = 'tinyprobe.icon'
 
 error_templates = {
     403: 'errors/default_error.html',

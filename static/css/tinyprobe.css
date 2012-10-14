@@ -105,6 +105,11 @@ a.close:link {
 	border-color: #DDD;
 }
 
+.app-icon {
+	height: 48px;
+	width: 48px;
+}
+
 #third_party_login .social-login-icons a.social-btn {
     display: inline-block;
     margin: 0 0 0.5em 0;
@@ -242,6 +247,10 @@ span.required {
 
 .input-xlarge {
 	width: 420px;
+}
+
+.input-xlong {
+	width: 840px;
 }
 
 .form-actions {

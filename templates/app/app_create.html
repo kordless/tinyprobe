@@ -7,7 +7,7 @@
 {% block header_title_lead %}
     <h1><a href="{{ uri_for("apps") }}">My Apps</a> / Create an App</h1>
     <p class="lead">
-        Choose a name and a URL of an existing TinyProbe <a href="http://gist.github.com/">gist on Github</a>.  You can <a href="#">fork one</a> to get started.
+        Enter a name and description for a new TinyProbe app.  A new app stub will be stored as a <a href="http://gist.github.com/">gist in your Github account</a> where you can begin authoring it.  You can also <a href="{{ uri_for("app-public") }}">fork a shared app</a> written by other TinyProbe users. 
     </p>
 {% endblock %}
 
@@ -15,8 +15,8 @@
     <form id="form_register" action="{{ url|safe }}" method="post" class="well form-horizontal">
         <fieldset>
             <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-            {{ macros.input(form, "appname", _("App Name"), placeholder=_("Fine Young App"), class="input-xlarge focused required", type="appname") }}
-            {{ macros.input(form, "appurl", _("App URL"), placeholder=_("https://gist.github.com/3778020"), class="input-xlarge focused required", type="appurl") }}
+            {{ macros.input(form, "appname", _("Name"), placeholder=_("Buy Local Signups"), class="input-xlarge focused required", type="appname") }}
+            {{ macros.input(form, "appurl", _("Description"), placeholder=_("Graphs signup events for Buy Local's website over the last week."), class="input-xlong focused required", type="appurl") }}
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-inverse btn-large">{% trans %}Create App{% endtrans %}</button>

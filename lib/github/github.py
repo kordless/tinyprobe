@@ -79,6 +79,7 @@ class GithubAuth(object):
             access_token=access_token,
             token_param='access_token'
         )
+        
         return simplejson.loads(body)
 
 

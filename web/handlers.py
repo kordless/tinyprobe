@@ -310,6 +310,7 @@ class CallbackSocialLoginHandler(BaseHandler):
 
                 # check to see if we are headed anywhere else besides the profile page
                 next_page = utils.read_cookie(self, 'oauth_return_url')
+                utils.write_cookie(self, 'oauth_return_url', '', '/', 15)
 
                 # try out what we found or redirect to profile if it's a bad value
                 if next_page:
@@ -1172,15 +1173,22 @@ class AppListHandler(BaseHandler):
                 for appfile in gist['files']:
                     # test for the occurrence of a tinyprobe app in the user's list of gists
                     if appfile == config.gist_manifest_name:
-                        try:
+                        if True:
+                        #try:
                             # grab the raw file and parse it for yaml bits
                             h = httplib2.Http()
                             resp, content = h.request(gist['files'][appfile]['raw_url'])
-                            manifest = yaml.load(content) 
-                            apps.append({'name': manifest['name'], 'description': manifest['description'], 'icon': 'None', 'url': gist['html_url']})
+                            manifest = yaml.load(content)
+                            try:
+                                resp, icon = h.request(gist['files'][config.gist_icon_name]['raw_url'])
+                            except:
+                                icon = ''
+                            
+                            apps.append({'name': manifest['name'], 'description': manifest['description'], 'icon': icon, 'url': gist['html_url']})
+                        '''
                         except:
                             apps.append({'name': 'Unknown', 'description': 'This app has manifest errors!', 'icon': 'None', 'url': gist['html_url']})
-            
+                        '''
             params = {'apps': apps}
             return self.render_template('app/app_list.html', **params)
 
