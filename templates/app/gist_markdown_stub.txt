@@ -1,0 +1,20 @@
+# {{ name }}
+{{ description }}
+
+## Usage
+{{ command }} parameter1 parameter2
+
+## Output
+A really cool visualization!
+![Visualize]: http://www.tinyprobe.com/img/screenshot.png "Visualize"
+
+## Features
+* awesome visualization
+* moves and updates
+* data scientist for the win
+
+## Examples
+``` javascript
+   // this is some sample code
+   alert("foobar");
+```

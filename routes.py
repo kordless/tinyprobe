@@ -11,10 +11,11 @@ secure_scheme = 'https'
 
 _routes = [
     # apps
-    RedirectRoute('/apps/new/', handlers.AppCreateHandler, name='apps-new', strict_slash=True),
-    RedirectRoute('/apps/', handlers.AppListHandler, name='apps', strict_slash=True),
-    RedirectRoute('/apps/<app_id>/', handlers.AppDetailHandler, name='app-detail', strict_slash=True),
-    RedirectRoute('/apps/public/', handlers.AppPublicHandler, name='app-public', strict_slash=True),
+    RedirectRoute('/apps/new/', handlers.AppsCreateHandler, name='apps-new', strict_slash=True),
+    RedirectRoute('/apps/', handlers.AppsListHandler, name='apps', strict_slash=True),
+    RedirectRoute('/apps/refresh/', handlers.AppsRefreshHandler, name='apps-refresh', strict_slash=True),
+    RedirectRoute('/apps/<app_id>/', handlers.AppsDetailHandler, name='apps-detail', strict_slash=True),
+    RedirectRoute('/apps/public/', handlers.AppsPublicHandler, name='apps-public', strict_slash=True),
 
     # shell
     RedirectRoute('/shell/', handlers.ShellHandler, name='shell', strict_slash=True),

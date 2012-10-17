@@ -1,7 +1,9 @@
 from webapp2_extras.appengine.auth.models import User
 from google.appengine.ext import ndb
 import urllib, httplib2, simplejson
+import config
 import logging
+import yaml
 
 class User(User):
     """
@@ -38,7 +40,6 @@ class User(User):
         social_user_objects = SocialUser.get_by_user(self.key)
         result = []
         for social_user_object in social_user_objects:
-            # logging.error(social_user_object.extra_data['screen_name'])
             result.append(social_user_object.provider)
         return result
 
@@ -75,7 +76,7 @@ class SocialUser(ndb.Model):
     PROVIDERS_INFO = { # uri is for OpenID only (not OAuth)
         'google': {'name': 'google', 'label': 'Google', 'uri': 'gmail.com'},
         'github': {'name': 'github', 'label': 'Github', 'uri': ''},
-        #'twitter': {'name': 'twitter', 'label': 'Twitter', 'uri': ''},
+        'twitter': {'name': 'twitter', 'label': 'Twitter', 'uri': ''},
     }
 
     user = ndb.KeyProperty(kind=User)
@@ -126,9 +127,12 @@ class SocialUser(ndb.Model):
 class App(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
-    author = ndb.KeyProperty(kind=User)
-    app_name = ndb.StringProperty()
-    app_gist_id = ndb.StringProperty()
+    owner = ndb.KeyProperty(kind=User)
+    name = ndb.StringProperty()
+    description = ndb.StringProperty()
+    preview = ndb.StringProperty()
+    command = ndb.StringProperty()
+    gist_id = ndb.StringProperty()
     activated = ndb.BooleanProperty(default=True)
     public = ndb.BooleanProperty(default=True)
 
@@ -137,16 +141,62 @@ class App(ndb.Model):
         pass
 
 
-    # Github Gist Calls
     @classmethod
-    def get_user_gists(self, github_user, access_token):
+    def get_by_user_and_command(cls, user, command):
+        return cls.query(cls.owner == user, cls.command == command).get()
+
+
+    @classmethod
+    def put_user_app(self, access_token, body):
+        try:
+            # stuff that sucker to github
+            params = {'access_token': access_token}
+            base_uri = 'https://api.github.com/gists'
+            uri = '%s?%s' % (base_uri, urllib.urlencode(params))
+            http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
+            headers, content = http.request(uri, method='POST', body=body, headers=None)
+
+            # check github said it made it ok
+            logging.info("value is: %s" % content)
+            return simplejson.loads(content)
+        except:
+            return False
+
+
+    @classmethod
+    def get_user_apps(self, github_user, access_token):
         params = {'access_token': access_token}
         base_uri = 'https://api.github.com/users/%s/gists' % github_user
         uri = '%s?%s' % (base_uri, urllib.urlencode(params))
         
-        # request data from github gist API
-        http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
-        (headers, body) = http.request(uri, method='GET', body=None, headers=None)
+        try:
+            # request data from github gist API
+            http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
+            headers, content = http.request(uri, method='GET', body=None, headers=None)
+            gists = simplejson.loads(content)
 
-        return simplejson.loads(body)
+            # transform gists into apps
+            apps = []
+            for gist in gists:
+                try:
+                    # grab the raw file and parse it for yaml bits
+                    if gist['files'][config.gist_manifest_name]['raw_url']:
+                        headers, content = http.request(gist['files'][config.gist_manifest_name]['raw_url'])
+                        manifest = yaml.load(content)
+
+                    # stuff it onto apps list
+                    apps.append({'name': manifest['name'], 'description': manifest['description'], 'url': gist['html_url']})
+                
+                except:
+                    # gist didn't have a tinyprobe.manifest file - so sad
+                    pass
+
+            return apps
+ 
+        except:
+            pass
+            # TODO do somthing if getting the gists fails
+            
+
+
 

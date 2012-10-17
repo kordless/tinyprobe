@@ -15,7 +15,6 @@ from webapp2_extras.auth import InvalidAuthIdError, InvalidPasswordError
 from webapp2_extras.i18n import gettext as _
 from webapp2_extras.appengine.auth.models import Unique
 from google.appengine.api import taskqueue
-import yaml
 
 # local application/library specific imports
 import config
@@ -305,8 +304,10 @@ class CallbackSocialLoginHandler(BaseHandler):
                     message = _('The TinyProbe application has been added to your Github account.')
                     self.add_message(message, 'success')
                 else:
-                    message = _('This Github account is already in use, perhaps with another account.')
+                    message = _('The currently logged in Github account is already in use with another account.')
                     self.add_message(message, 'error')
+                    self.redirect_to('edit-profile')
+                    return
 
                 # check to see if we are headed anywhere else besides the profile page
                 next_page = utils.read_cookie(self, 'oauth_return_url')
@@ -1127,31 +1128,47 @@ class ShellHandler(BaseHandler):
         self.get()
 
 
-class AppDetailHandler(BaseHandler):
+class AppsDetailHandler(BaseHandler):
     @user_required
     def get(self, app_id = None):
-        params = {}
-        return self.render_template('app/app_detail.html', **params)
-    
+        # check this user owns this app OR it's public and can be viewed
+        user_info = models.User.get_by_id(long(self.user_id))
+        app = models.App.get_by_id(long(app_id))
+        logging.info("value is: %s" % app)
+
+        # show it if current user is the owner or it's been made public
+        if app.owner == self.user_id or app.public == True:
+            params = {'app': app}
+            return self.render_template('app/app_detail.html', **params)
+        else:
+            params = {}
+            return self.render_template('app/app_list.html', **params)
+
     @webapp2.cached_property
     def form(self):
         return forms.AppForm(self)
 
 
-class AppPublicHandler(BaseHandler):
+class AppsRefreshHandler(BaseHandler):
+    @user_required
+    def get(self):
+        # refresh list of apps from github
+        return
+
+
+class AppsPublicHandler(BaseHandler):
     @user_required
     def get(self):
         # serve all public apps
         return
-    
-class AppListHandler(BaseHandler):
-    # we'll need to pull gists from the user's github account to filter and list them
-    # the idea is to re-log them into github if our token is expired and get a new one!
 
+    
+class AppsListHandler(BaseHandler):
     @user_required
     def get(self):
         # pull the github token out of the social user db
         user_info = models.User.get_by_id(long(self.user_id))
+        logging.info("value is: %s" % long(self.user_id))
         social_user = models.SocialUser.get_by_user_and_provider(user_info.key, 'github')
 
         # what do we do if we don't have a token or association?  auth 'em!
@@ -1163,61 +1180,96 @@ class AppListHandler(BaseHandler):
             self.redirect( github_helper.get_authorize_url() )
             return
         else:
-            gists = models.App.get_user_gists(social_user.uid, social_user.access_token)
-
-            # temporary until we get syncing running
-            # scan for a manifest files then parse them
-            apps = []
-            for gist in gists:
-                tp_app_detect = False
-                for appfile in gist['files']:
-                    # test for the occurrence of a tinyprobe app in the user's list of gists
-                    if appfile == config.gist_manifest_name:
-                        if True:
-                        #try:
-                            # grab the raw file and parse it for yaml bits
-                            h = httplib2.Http()
-                            resp, content = h.request(gist['files'][appfile]['raw_url'])
-                            manifest = yaml.load(content)
-                            try:
-                                resp, icon = h.request(gist['files'][config.gist_icon_name]['raw_url'])
-                            except:
-                                icon = ''
-                            
-                            apps.append({'name': manifest['name'], 'description': manifest['description'], 'icon': icon, 'url': gist['html_url']})
-                        '''
-                        except:
-                            apps.append({'name': 'Unknown', 'description': 'This app has manifest errors!', 'icon': 'None', 'url': gist['html_url']})
-                        '''
+            # return our list of apps we grab from github - TODO push into database?
+            apps = models.App.get_user_apps(social_user.uid, social_user.access_token)
             params = {'apps': apps}
             return self.render_template('app/app_list.html', **params)
 
 
-class AppCreateHandler(BaseHandler):
+class AppsCreateHandler(BaseHandler):
     @user_required
     def get(self):
-        params = {}
-        return self.render_template('app/app_create.html', **params)
+        # pull the github token out of the social user db
+        user_info = models.User.get_by_id(long(self.user_id))
+        social_user = models.SocialUser.get_by_user_and_provider(user_info.key, 'github')
+
+        # what do we do if we don't have a token or association?  auth 'em!
+        if not social_user:
+            scope = 'gist'
+            # drop a short lived cookie so we know where to come back to when we're done auth'ing
+            utils.write_cookie(self, 'oauth_return_url', 'apps-create', '/', 15)
+            github_helper = github.GithubAuth(scope)
+            self.redirect( github_helper.get_authorize_url() )
+            return
+        else:
+            params = {}
+            return self.render_template('app/app_create.html', **params)
         
     @user_required
     def post(self):
-        user_info = models.User.get_by_id(long(self.user_id))
-        if not app_id:
-            appname = self.form.appname.data.strip()
-            appurl = self.form.appurl.data.strip()
-        
-            app = models.App(
-                appname = appname,
-                appurl = appurl,
-                created_by = user_info.key,
-            )
+        if not self.form.validate():
+            return self.get()
 
+        # pull the github token out of the social user db
+        user_info = models.User.get_by_id(long(self.user_id))
+        social_user = models.SocialUser.get_by_user_and_provider(user_info.key, 'github')
+        
+        # load values out of the form
+        name = self.form.appname.data.strip()
+        command = self.form.appcommand.data.strip()
+        description = self.form.appdescription.data.strip()
+        preview = config.gist_preview_image
+
+        # check to see if there is an app in this account with this command name, or used globally 
+        if command in config.reserved_commands or models.App.get_by_user_and_command(user_info.key, command):
+            self.add_message(_("The command '%s' is already in use.  Try picking another command name for your app." % command), 'warning')
+            # return self.get()
+        
+        # push the sample app to the user's gist on github
+        template_val = {
+            "name": name,
+            "command": command,
+            "description": description,
+            "username": social_user.uid,
+            "preview": preview,
+        }
+
+        # build a dict of files we want to push into the gist
+        files = {
+            config.gist_manifest_name: self.jinja2.render_template("app/gist_manifest_stub.txt", **template_val),
+            config.gist_javascript_name: self.jinja2.render_template("app/gist_javascript_stub.txt", **template_val),
+            config.gist_markdown_name: self.jinja2.render_template("app/gist_markdown_stub.txt", **template_val)
+        }
+
+        # loop through them and add them to the other JSON values for github
+        file_data = dict((filename, {'content': text}) for filename, text in files.items())
+        data = json.dumps({'description': "%s for TinyProbe" % name, 'public': True, 'files': file_data})
+
+        # stuff it to github and then grab our gist_id
+        gist = models.App.put_user_app(social_user.access_token, data)
+        logging.info("value is: %s" % gist)
+        gist_id = gist['id']
+
+        if gist:
+            # save the app in our database            
+            app = models.App(
+                name = name,
+                command = command,
+                description = description,
+                preview = preview,
+                gist_id = gist_id,
+                owner = user_info.key,
+            )
             app.put()
-            logging.info(app)
-            self.add_message(_('App created.'), 'success')
-            return self.redirect_to('app-detail', )
+
+            self.add_message(_('App %s successfully created!' % name), 'success')
+            params = {"app_id": app.key.id()}
+            return self.redirect_to('apps-detail', **params)
         else:
-            pass
+            # something went wrong with the App.put_user_app call in models.py
+            self.add_message(_('App was not created.  Something went horribly wrong somewhere!' % name), 'warning')
+            return self.get()
+
 
     @webapp2.cached_property
     def form(self):

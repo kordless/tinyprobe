@@ -58,7 +58,12 @@ google_analytics_code = "UA-34233674-1"
 
 # name to use to ID TinyProbe gists
 gist_manifest_name = 'tinyprobe.manifest'
-gist_icon_name = 'tinyprobe.icon'
+gist_javascript_name = 'tinyprobe.js'
+gist_markdown_name = 'tinyprobe.md'
+gist_preview_image = 'http://www.tinyprobe.com/img/screenshot.png '
+
+# reserved commands for shell to help prevent apps from using them
+reserved_commands = ['graph', 'search', 'clear', 'quit', 'close', 'exit', 'help', 'logout', 'curl', 'wget', 'irc', 'status', 'theme']
 
 error_templates = {
     403: 'errors/default_error.html',

@@ -1,3 +1,5 @@
+// should migrate to a new shell: http://enekoalonso.com/
+
 TerminalShell.filters.push(function (terminal, cmd) {
 	if (/!!/.test(cmd)) {
 		var newCommand = cmd.replace('!!', this.lastCommand);

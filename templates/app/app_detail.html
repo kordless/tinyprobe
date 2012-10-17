@@ -1,0 +1,16 @@
+{% extends base_layout %}
+
+{% block header_title %}
+        {% trans %}Apps{% endtrans %}
+{% endblock %}
+
+{% block header_title_lead %}
+    <h1><a href="{{ uri_for("apps") }}">My Apps</a> / {{ app.name }}</h1>
+    <p class="lead">
+    	{{ app.description }}
+    </p>
+{% endblock %}
+
+{% block content %}
+	<script src="https://gist.github.com/{{ app.gist_id }}.js"> </script>
+{% endblock %}

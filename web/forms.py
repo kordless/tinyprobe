@@ -29,9 +29,9 @@ class BaseForm(Form):
         return FormTranslations()
 
 class AppForm(BaseForm):
-    appname = fields.TextField(_('Appname'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)], id='appname')
-    appurl = fields.TextField(_('Appdescription'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)], id='appdescription')
-    pass
+    appname = fields.TextField(_('App_Name'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)], id='appname')
+    appdescription = fields.TextField(_('App_Description'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)], id='appdescription')
+    appcommand = fields.TextField(_('App_Command'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH), validators.regexp(utils.ALPHANUMERIC_REGEXP, message=_('Command string is invalid. Letters and numbers only!'))], id='appcommand')
 
 class CurrentPasswordMixin(BaseForm):
     current_password = fields.TextField(_('Password'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)])

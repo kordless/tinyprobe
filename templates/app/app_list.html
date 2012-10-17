@@ -7,7 +7,7 @@
 {% block header_title_lead %}
     <h1>My Apps</h1>
     <p class="lead">
-    	Apps are stored in <a href="http://gist.github.com/">Gists</a> on your Github account.  You can also <a href="{{ uri_for("app-public") }}">browse existing apps</a> shared by other TinyProbe users.
+    	Apps are stored in <a href="http://gist.github.com/">Gists</a> on your Github account.  You can also <a href="{{ uri_for("apps-public") }}">browse existing apps</a> shared by other TinyProbe users.
     </p>
 {% endblock %}
 
@@ -38,6 +38,7 @@
 	</table>
     <div class="form-actions">
         <a href="{{ uri_for("apps-new") }}" class="btn btn-inverse btn-large">{% trans %}Create an App{% endtrans %}</a>
+        <a href="{{ uri_for("apps-refresh") }}" class="btn btn-inverse btn-large">{% trans %}Refresh Apps{% endtrans %}</a>
     </div>
 {% endblock %}
 

@@ -7,17 +7,17 @@
 {% block header_title_lead %}
     <h1><a href="{{ uri_for("apps") }}">My Apps</a> / Create an App</h1>
     <p class="lead">
-        Enter a name and description for a new TinyProbe app.  A new app stub will be stored as a <a href="http://gist.github.com/">gist in your Github account</a> where you can begin authoring it.  You can also <a href="{{ uri_for("app-public") }}">fork a shared app</a> written by other TinyProbe users. 
+        Enter a name, description and command name for a new TinyProbe app.  A new app stub will be stored as a <a href="http://gist.github.com/">gist</a> in your Github account where you can edit it.  You can also <a href="{{ uri_for("apps-public") }}">fork shared apps</a> written by other TinyProbe users. 
     </p>
 {% endblock %}
 
 {% block content %}
-    <form id="form_register" action="{{ url|safe }}" method="post" class="well form-horizontal">
+    <form id="form_edit_profile" action="{{ url|safe }}" method="post" class="well form-horizontal">
         <fieldset>
             <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-            {{ macros.input(form, "appname", _("Name"), placeholder=_("Buy Local Signups"), class="input-xlarge focused required", type="appname") }}
-            {{ macros.input(form, "appurl", _("Description"), placeholder=_("Graphs signup events for Buy Local's website over the last week."), class="input-xlong focused required", type="appurl") }}
-
+            {{ macros.input(form, "appname", _("Name"), placeholder=_("Awesome Signup Graph"), class="input-xlarge focused required") }}
+            {{ macros.input(form, "appdescription", _("Description"), placeholder=_("Graphs signup events for Buy Local's website over the last week."), class="input-xlong focused required") }}
+            {{ macros.input(form, "appcommand", _("Command Line Name"), placeholder=_("awesome"), class="input-xlarge focused required") }}
             <div class="form-actions">
                 <button type="submit" class="btn btn-inverse btn-large">{% trans %}Create App{% endtrans %}</button>
             </div>
