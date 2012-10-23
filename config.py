@@ -7,7 +7,7 @@ webapp2_config['webapp2_extras.sessions'] = {
     'secret_key': '14758f1afd44c09b7992073ccf00b43d',
 }
 webapp2_config['webapp2_extras.auth'] = {
-    'user_model': 'models.models.User',
+    'user_model': 'web.models.models.User',
     'cookie_name': 'session_name'
 }
 webapp2_config['webapp2_extras.jinja2'] = {
@@ -54,6 +54,7 @@ else:
 captcha_public_key = "6LeZidUSAAAAAH4URz_h0kKl-NDciRnE3Nw8ajJd"
 captcha_private_key = "6LeZidUSAAAAAI1L48D6X2YKToFCmCpXf8VyCHvK"
 
+# tracking shizzle
 google_analytics_code = "UA-34233674-1"
 
 # name to use to ID TinyProbe gists

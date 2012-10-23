@@ -13,7 +13,7 @@ from webapp2_extras import sessions
 import config
 from lib import utils, i18n
 from babel import Locale
-import models.models as models
+import web.models.models as models
 
 def user_required(handler):
     """

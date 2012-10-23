@@ -1,4 +1,4 @@
-   html, body {
+html, body {
 	height: 100%;
 	vertical-align: baseline;
 	padding-top: 0px;
@@ -58,7 +58,10 @@ a {
 	color: #8D8D8D;
 	text-decoration: underline;
 }
-
+a:hover {
+    color: #8D8D8D;
+    text-decoration: underline;
+}
 a.btn {
 	text-decoration: none;
 }
@@ -230,7 +233,10 @@ input {
 div.control-group a {
 	font-size: 14px;
 }
-
+.control-group.error .input-prepend .add-on,
+.control-group.error .input-append .add-on {
+    background-color: #CDCDCD;
+}
 .control-label {
 	margin-bottom: 0px;
 }

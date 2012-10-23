@@ -24,7 +24,7 @@ from mock import patch
 import config
 import routes
 import web
-import models.models as models
+import web.models as models
 from lib import utils
 from lib import captcha
 from lib import i18n
