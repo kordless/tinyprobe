@@ -38,13 +38,33 @@
 	</table>
     <div class="form-actions">
         <a href="{{ uri_for("apps-new") }}" class="btn btn-inverse btn-large">{% trans %}Create an App{% endtrans %}</a>
-        <a href="{{ uri_for("apps-refresh") }}" class="btn btn-inverse btn-large">{% trans %}Refresh Apps{% endtrans %}</a>
+        <a id="refresh_button" class="btn btn-inverse btn-large">{% trans %}Refresh Apps{% endtrans %}</a>
     </div>
 {% endblock %}
 
 {% block mediaJS %}
+<script type="text/javascript" src="/_ah/channel/jsapi"></script>
 <script type="text/javascript">
     $().ready(function() {
+        // watch for refresh_button to be clicked
+        $("#refresh_button").click(function() {
+            $.ajax({
+                url: '{{ uri_for("apps-refresh") }}?channel_token={{ channel_token }}',
+                success:(function() {
+                    $('#refresh_button').unbind("click");
+                    $('#refresh_button').addClass("disabled");
+                })
+            });
+        });
+        // listen to our refresh channel for page reload
+        onMessage = function() {
+            window.location.reload();
+        };
+        channel = new goog.appengine.Channel('{{ refresh_channel }}');
+        socket = channel.open();
+        socket.onmessage = onMessage;
+
+        // deal with forms
         $("#form_register").validate({
             submitHandler: function(form) {
                     form.submit();

@@ -17,10 +17,9 @@ __author__ = 'Kord Campbell'
 __website__ = 'http://www.tinyprobe.com'
 
 import config
+import urllib, httplib2, simplejson, yaml
 import lib.github.oauth_client as oauth2
-import simplejson
 import logging
-
 
 # Github OAuth Implementation
 class GithubAuth(object):
@@ -83,4 +82,52 @@ class GithubAuth(object):
         return simplejson.loads(body)
 
 
+def get_user_gists(github_user, access_token):
+    params = {'access_token': access_token}
+    base_uri = 'https://api.github.com/users/%s/gists' % github_user
+    uri = '%s?%s' % (base_uri, urllib.urlencode(params))
+    
+    try:
+        # request data from github gist API
+        http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
+        headers, content = http.request(uri, method='GET', body=None, headers=None)
+        gists = simplejson.loads(content)
+
+        # transform gists into apps
+        apps = []
+        for gist in gists:
+            try:
+                # grab the raw file and parse it for yaml bits
+                if gist['files'][config.gist_manifest_name]['raw_url']:
+                    headers, content = http.request(gist['files'][config.gist_manifest_name]['raw_url'])
+                    manifest = yaml.load(content)
+
+                # stuff it onto apps list
+                apps.append({'name': manifest['name'], 'description': manifest['description'], 'url': gist['html_url']})
+            
+            except:
+                # gist didn't have a tinyprobe.manifest file - so sad
+                pass
+
+        return apps
+
+    except:
+        pass
+        # TODO do somthing if getting the gists fails
+
+
+def put_user_gist(access_token, body):
+    try:
+        # stuff that sucker to github
+        params = {'access_token': access_token}
+        base_uri = 'https://api.github.com/gists'
+        uri = '%s?%s' % (base_uri, urllib.urlencode(params))
+        http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
+        headers, content = http.request(uri, method='POST', body=body, headers=None)
+
+        # check github said it made it ok
+        logging.info("value is: %s" % content)
+        return simplejson.loads(content)
+    except:
+        return False
 

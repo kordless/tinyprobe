@@ -136,67 +136,25 @@ class App(ndb.Model):
     activated = ndb.BooleanProperty(default=True)
     public = ndb.BooleanProperty(default=True)
 
-    @classmethod
-    def get_public(cls):
-        pass
-
 
     @classmethod
     def get_by_user_and_command(cls, user, command):
-        return cls.query(cls.owner == user, cls.command == command).get()
+        # get() a single app by user/command
+        gist = cls.query(cls.owner == user, cls.command == command).get()
+        return gist
 
 
     @classmethod
-    def put_user_app(self, access_token, body):
-        try:
-            # stuff that sucker to github
-            params = {'access_token': access_token}
-            base_uri = 'https://api.github.com/gists'
-            uri = '%s?%s' % (base_uri, urllib.urlencode(params))
-            http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
-            headers, content = http.request(uri, method='POST', body=body, headers=None)
-
-            # check github said it made it ok
-            logging.info("value is: %s" % content)
-            return simplejson.loads(content)
-        except:
-            return False
-
+    def get_by_user_and_gist_id(cls, user, gist_id):
+        # get() a single app by user/gist_id
+        gist = cls.query(cls.owner == user, cls.gist_id == gist_id).get()
+        # logging.info("value is: %s" % gist)
+        return gist
 
     @classmethod
-    def get_user_apps(self, github_user, access_token):
-        params = {'access_token': access_token}
-        base_uri = 'https://api.github.com/users/%s/gists' % github_user
-        uri = '%s?%s' % (base_uri, urllib.urlencode(params))
-        
-        try:
-            # request data from github gist API
-            http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
-            headers, content = http.request(uri, method='GET', body=None, headers=None)
-            gists = simplejson.loads(content)
-
-            # transform gists into apps
-            apps = []
-            for gist in gists:
-                try:
-                    # grab the raw file and parse it for yaml bits
-                    if gist['files'][config.gist_manifest_name]['raw_url']:
-                        headers, content = http.request(gist['files'][config.gist_manifest_name]['raw_url'])
-                        manifest = yaml.load(content)
-
-                    # stuff it onto apps list
-                    apps.append({'name': manifest['name'], 'description': manifest['description'], 'url': gist['html_url']})
-                
-                except:
-                    # gist didn't have a tinyprobe.manifest file - so sad
-                    pass
-
-            return apps
- 
-        except:
-            pass
-            # TODO do somthing if getting the gists fails
-            
-
+    def get_by_user(cls, user):
+        app_query = cls.query().filter(cls.owner == user).order(App.command)
+        gists = app_query.fetch()
+        return gists
 
 

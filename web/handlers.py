@@ -154,20 +154,11 @@ class HomeRequestHandler(BaseHandler):
         return self.render_template('home.html', **params)
 
 
-class ProductHandler(BaseHandler):
-    def get(self, product_page=''):
-        params = {"product_page": product_page}
-
-        if product_page == 'pricing':
-            return self.render_template('product/pricing.html', **params)
-        else:
-            return self.render_template('home.html', **params)
-
-
 class CompanyHandler(BaseHandler):
-    def get(self, product_page=''):
-        params = {"company_page": company_page}
-        if company_page == 'pricing':
+    def get(self):
+        logging.info("value is: %s" % self.request.path)
+        params = {}
+        if self.request.path == '/company/pricing/':
             return self.render_template('company/pricing.html', **params)
         else:
             return self.render_template('home.html', **params)

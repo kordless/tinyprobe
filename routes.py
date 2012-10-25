@@ -17,8 +17,9 @@ _routes = [
     RedirectRoute('/apps/new/', apphandlers.AppsCreateHandler, name='apps-new', strict_slash=True),
     RedirectRoute('/apps/', apphandlers.AppsListHandler, name='apps', strict_slash=True),
     RedirectRoute('/apps/refresh/', apphandlers.AppsRefreshHandler, name='apps-refresh', strict_slash=True),
-    RedirectRoute('/apps/<app_id>/', apphandlers.AppsDetailHandler, name='apps-detail', strict_slash=True),
     RedirectRoute('/apps/public/', apphandlers.AppsPublicHandler, name='apps-public', strict_slash=True),
+    RedirectRoute('/apps/buildlist/', apphandlers.AppsBuildListHandler, name='apps-public', strict_slash=True),
+    RedirectRoute('/apps/<app_id>/', apphandlers.AppsDetailHandler, name='apps-detail', strict_slash=True),
 
     # shell
     RedirectRoute('/shell/', shellhandlers.ShellHandler, name='shell', strict_slash=True),
@@ -48,10 +49,8 @@ _routes = [
 
     # website pages
     RedirectRoute('/', handlers.HomeRequestHandler, name='home', strict_slash=True),
-    RedirectRoute('/product/', handlers.ProductHandler, name='product', strict_slash=True),
-    RedirectRoute('/product/<product_page>/', handlers.ProductHandler, name='product-pages', strict_slash=True),
-    RedirectRoute('/company/', handlers.ProductHandler, name='company', strict_slash=True),
-    RedirectRoute('/company/<company_page>/', handlers.CompanyHandler, name='company-pages', strict_slash=True),
+    RedirectRoute('/company/', handlers.CompanyHandler, name='company', strict_slash=True),
+    RedirectRoute('/company/pricing/', handlers.CompanyHandler, name='pricing', strict_slash=True),
     RedirectRoute('/contact/', handlers.ContactHandler, name='contact', strict_slash=True),
 ]
 

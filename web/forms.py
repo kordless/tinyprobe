@@ -30,7 +30,7 @@ class BaseForm(Form):
 
 class AppForm(BaseForm):
     appname = fields.TextField(_('App_Name'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)], id='appname')
-    appdescription = fields.TextField(_('App_Description'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)], id='appdescription')
+    appdescription = fields.TextField(_('App_Description'), [validators.Required(), validators.Length(max=140)], id='appdescription')
     appcommand = fields.TextField(_('App_Command'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH), validators.regexp(utils.ALPHANUMERIC_REGEXP, message=_('Command string is invalid. Letters and numbers only!'))], id='appcommand')
 
 class CurrentPasswordMixin(BaseForm):

@@ -33,6 +33,9 @@ builtins:
 - appstats: on #/_ah/stats/
 - remote_api: on #/_ah/remote_api/
 
+inbound_services:
+- channel_presence
+
 handlers:
 - url: /favicon\.ico
   mime_type: image/vnd.microsoft.icon

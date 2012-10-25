@@ -15,6 +15,8 @@ from webapp2_extras.auth import InvalidAuthIdError, InvalidPasswordError
 from webapp2_extras.i18n import gettext as _
 from webapp2_extras.appengine.auth.models import Unique
 from google.appengine.api import taskqueue
+from google.appengine.ext import db
+from google.appengine.api import channel
 
 # local application/library specific imports
 import config
@@ -50,26 +52,52 @@ class AppsDetailHandler(BaseHandler):
         return forms.AppForm(self)
 
 
-class AppsRefreshHandler(BaseHandler):
-    @user_required
-    def get(self):
-        # refresh list of apps from github
-        return
-
-
 class AppsPublicHandler(BaseHandler):
     @user_required
     def get(self):
         # serve all public apps
         return
+        # test yanking a gist
+        # gist = models.App.get_by_user_and_gist_id(user_info.key, '3902522')
+        # logging.info("value is: %s" % gist)
 
-    
+
+class AppsRefreshHandler(BaseHandler):
+	def task(self, user=None, channel_token=None):
+		# use both token and user to schedule job for updating user's apps from github gists
+		t = taskqueue.add(method='GET', url='/apps/buildlist/', params={'channel_token': channel_token, 'user': user}, transactional=True)
+		return
+
+	# user pushed apps refresh/rebuild button on apps list page
+	@user_required
+	def get(self):
+		# refresh_token gets passed in URL and we use the current logged in user to start a job
+		channel_token = self.request.get('channel_token')
+		user = self.user_id
+		db.run_in_transaction(self.task, user, channel_token)
+		return
+
+
+class AppsBuildListHandler(BaseHandler):
+	# handle a job request for rebuilding a user's apps from their github gists
+	def get(self):
+		import time
+		time.sleep(5)
+		channel_token = self.request.get('channel_token')
+		user = self.request.get('user')
+		channel.send_message(channel_token, 'reload')
+		return
+
+	def post(self):
+		self.get()
+
+
 class AppsListHandler(BaseHandler):
     @user_required
     def get(self):
         # pull the github token out of the social user db
         user_info = models.User.get_by_id(long(self.user_id))
-        logging.info("value is: %s" % long(self.user_id))
+        # logging.info("value is: %s" % user_info)
         social_user = models.SocialUser.get_by_user_and_provider(user_info.key, 'github')
 
         # what do we do if we don't have a token or association?  auth 'em!
@@ -82,8 +110,11 @@ class AppsListHandler(BaseHandler):
             return
         else:
             # return our list of apps we grab from github - TODO push into database?
-            apps = models.App.get_user_apps(social_user.uid, social_user.access_token)
-            params = {'apps': apps}
+            # apps = github.get_user_gists(social_user.uid, social_user.access_token)
+            apps = models.App.get_by_user(user_info.key)
+            channel_token = user_info.key.urlsafe()
+            refresh_channel = channel.create_channel(channel_token)
+            params = {'apps': apps, 'refresh_channel': refresh_channel, 'channel_token': channel_token}
             return self.render_template('app/app_list.html', **params)
 
 
@@ -147,11 +178,12 @@ class AppsCreateHandler(BaseHandler):
         data = json.dumps({'description': "%s for TinyProbe" % name, 'public': True, 'files': file_data})
 
         # stuff it to github and then grab our gist_id
-        gist = models.App.put_user_app(social_user.access_token, data)
+        gist = github.put_user_gist(social_user.access_token, data)
         logging.info("value is: %s" % gist)
         gist_id = gist['id']
 
-        if gist:
+        # make sure it's not already in the database (unlikely)
+        if not models.App.get_by_user_and_gist_id(user_info.key, gist_id):
             # save the app in our database            
             app = models.App(
                 name = name,
