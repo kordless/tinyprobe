@@ -45,7 +45,7 @@ def get_territory_from_ip(cls):
         example: http://geoip.wtanaka.com/flag/us.gif
     """
     territory = None
-    logging.info(cls)
+    #logging.info(cls)
     try:
         try:
             cook_territory = cls.request.cookies.get('territory', None)

@@ -40,7 +40,7 @@ class AppsDetailHandler(BaseHandler):
         logging.info("value is: %s" % app)
 
         # show it if current user is the owner or it's been made public
-        if app.owner == self.user_id or app.public == True:
+        if app.owner == user_info.key or app.public == True:
             params = {'app': app}
             return self.render_template('app/app_detail.html', **params)
         else:
@@ -62,6 +62,8 @@ class AppsPublicHandler(BaseHandler):
         # logging.info("value is: %s" % gist)
 
 
+# JOB SCHEDULER
+# schedule a job request for rebuilding user's apps from github gists
 class AppsRefreshHandler(BaseHandler):
 	def task(self, user=None, channel_token=None):
 		# use both token and user to schedule job for updating user's apps from github gists
@@ -77,14 +79,32 @@ class AppsRefreshHandler(BaseHandler):
 		db.run_in_transaction(self.task, user, channel_token)
 		return
 
-
+# JOB HANDLER
+# handle a job request for rebuilding a user's apps from their github gists
 class AppsBuildListHandler(BaseHandler):
-	# handle a job request for rebuilding a user's apps from their github gists
 	def get(self):
-		import time
-		time.sleep(5)
+		# pull the github token out of the social user db and grab gists from github
+		user_info = models.User.get_by_id(long(self.request.get('user')))
+		social_user = models.SocialUser.get_by_user_and_provider(user_info.key, 'github')
+		gists = github.get_user_gists(social_user.uid, social_user.access_token)
+		
+		# delete the old entries
+		models.App.delete_by_user(user_info.key)
+
+		# update with the gists
+		for gist in gists:
+			app = models.App(
+				name = gist['name'],
+				command = gist['command'],
+				description = gist['description'],
+				preview = gist['preview'],
+				gist_id = gist['gist_id'],
+				owner = user_info.key,
+			)
+			app.put()
+
+		# use the channel to tell the browser we are done
 		channel_token = self.request.get('channel_token')
-		user = self.request.get('user')
 		channel.send_message(channel_token, 'reload')
 		return
 
@@ -97,7 +117,6 @@ class AppsListHandler(BaseHandler):
     def get(self):
         # pull the github token out of the social user db
         user_info = models.User.get_by_id(long(self.user_id))
-        # logging.info("value is: %s" % user_info)
         social_user = models.SocialUser.get_by_user_and_provider(user_info.key, 'github')
 
         # what do we do if we don't have a token or association?  auth 'em!
@@ -109,13 +128,18 @@ class AppsListHandler(BaseHandler):
             self.redirect( github_helper.get_authorize_url() )
             return
         else:
-            # return our list of apps we grab from github - TODO push into database?
-            # apps = github.get_user_gists(social_user.uid, social_user.access_token)
             apps = models.App.get_by_user(user_info.key)
-            channel_token = user_info.key.urlsafe()
-            refresh_channel = channel.create_channel(channel_token)
-            params = {'apps': apps, 'refresh_channel': refresh_channel, 'channel_token': channel_token}
-            return self.render_template('app/app_list.html', **params)
+
+            if not apps:
+            	# no apps, no problem, make one
+            	params = {}
+            	return self.redirect_to('apps-new', **params)
+            else:
+            	# setup channel to do page refresh in case they sync
+	            channel_token = user_info.key.urlsafe()
+	            refresh_channel = channel.create_channel(channel_token)
+	            params = {'apps': apps, 'refresh_channel': refresh_channel, 'channel_token': channel_token}
+	            return self.render_template('app/app_list.html', **params)
 
 
 class AppsCreateHandler(BaseHandler):

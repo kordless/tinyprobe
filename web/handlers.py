@@ -164,6 +164,11 @@ class CompanyHandler(BaseHandler):
             return self.render_template('home.html', **params)
 
 
+class ForumHandler(BaseHandler):
+    def get(self):
+        params = {}
+        return self.render_template('company/forums.html', **params)
+
 
 
 

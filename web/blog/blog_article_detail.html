@@ -1,0 +1,63 @@
+<!-- renders an individual blog post -->
+{% extends base_layout %}
+
+{% block title %}
+  {{ entry.article_title }}
+{% endblock %}
+
+{% block rssfeed %}
+	<link rel="alternate" type="application/rss+xml" title="Feed for {{ username }} on StackGeek.com" href="http://www.stackgeek.com/blog/{{ username }}/feed/rss/" />
+{% endblock %}
+
+{% block extra_nav %}
+	{{ macros.nav_menu(menu_choice, user_id) }}
+{% endblock %}
+
+{% block content %}
+  <div class="row blog">
+    {% if is_mobile %}
+    <div class="span3">
+      <a class="twitter-timeline" data-dnt=true href="https://twitter.com/{{entry.article_owner}}" data-widget-id="{{twitter_widget_id}}">Tweets by @{{entry.article_owner}}</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    </div>
+    {% endif %}
+    <div class="span9">
+      <div class="apost">
+        <h2 class="postdetail"><a href="/blog/{{ entry.article_owner }}/{{ article_type }}/{{ entry.article_slug }}">{{ entry.article_title }}</a></h2>
+        <div class="date_social">
+          <div class="date"><span class="label label-important">{{ entry.created }}</span></div>
+          {% if user_id %}
+            {{ macros.fork_gist_widget(entry.article_owner, entry.article_id) }}
+          {% endif %}
+          {{ macros.g_plus_widget("http://%s/blog/%s/%s/%s"%(entry.article_host, entry.article_owner, entry.article_type, entry.article_slug)) }}
+          {{ macros.tweet_widget("http://%s/blog/%s/%s/%s"%(entry.article_host, entry.article_owner, entry.article_type, entry.article_slug), entry.article_summary) }}
+        </div>
+        <p>by <a href="/blog/{{ entry.article_owner }}">{{ entry.article_owner }}</a>
+        {{entry.article_html}}
+        <a name="comments"></a>
+        <div id="disqus_thread"></div>
+      </div>
+    </div>
+    {% if not is_mobile %}
+    <div class="span3">
+      <a class="twitter-timeline" data-dnt=true href="https://twitter.com/{{entry.article_owner}}" data-widget-id="{{twitter_widget_id}}">Tweets by @{{entry.article_owner}}</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block mediaJS %}
+    <script type="text/javascript" language="JavaScript">
+    $(window).load(function(){
+      var disqus_shortname = 'stackgeek';
+      var disqus_developer = 1;
+      var disqus_url = 'http://stackgeek.com/guides/gettingstarted.html';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    });
+    </script>
+{% endblock %}

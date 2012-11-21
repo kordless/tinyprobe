@@ -101,9 +101,17 @@ def get_user_gists(github_user, access_token):
                 if gist['files'][config.gist_manifest_name]['raw_url']:
                     headers, content = http.request(gist['files'][config.gist_manifest_name]['raw_url'])
                     manifest = yaml.load(content)
-
+                    logging.info("value is: %s" % manifest)
+                logging.info("value is: %s" % gist)
                 # stuff it onto apps list
-                apps.append({'name': manifest['name'], 'description': manifest['description'], 'url': gist['html_url']})
+                apps.append({
+                    'name': manifest['name'],
+                    'command': manifest['command'],
+                    'preview': manifest['preview'],
+                    'gist_id': gist['id'],
+                    'description': manifest['description'],
+                    'url': gist['html_url'],
+                })
             
             except:
                 # gist didn't have a tinyprobe.manifest file - so sad

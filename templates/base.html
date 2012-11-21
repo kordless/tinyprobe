@@ -46,211 +46,211 @@
     <script src="/js/libs/modernizr-2.6.1.min.js"></script>
 </head>
 <body>
-      <div id="page">
-        {% block navbar %}
-        <div class="navbar navbar-fixed-top">
-            <div class="navbar-inner">
-              <div class="navbar-container">
-                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-chevron-down icon-white"></span>
-                </button>
-                <a class="brand" href="/">
-                  <img alt="TinyProbe" height="18" src="/img/logo.png" style="margin-bottom: -1px;" width="18"><span>TinyProbe</span>
-                </a>
-                <div class="nav-collapse">
-                    <ul class="nav pull-right">
-                        {% block extra_nav %}{% endblock %}
-                        {% if user_id %}
-                        <li class="dropdown">
-                            <button class="btn btn-inverse" data-toggle="dropdown">@{{ username }} <b class="caret"></b></button>
-                            <ul class="dropdown-menu">
-                                <li><a href="{{ uri_for("shell") }}" target="_blank">{% trans %}New Shell{% endtrans %}</a></li> 
-                                <li><a href="{{ uri_for("apps") }}">{% trans %}My Apps{% endtrans %}</a></li>                               
-                                <li class="divider"></li>
-                                <li><a href="{{ uri_for("edit-profile") }}">{% trans %}Edit Profile{% endtrans %}</a></li>
-                                <li><a href="{{ uri_for("edit-email") }}">{% trans %}Change Email{% endtrans %}</a></li>
-                                <li><a href="{{ uri_for("edit-password") }}">{% trans %}Change Password{% endtrans %}</a></li>                              
-                                <li class="divider"></li>
-                                <li><a href="{{ logout_url }}">{% trans %}Logout{% endtrans %}</a></li>
-                            </ul>
-                        </li>
-                        {% elif path != "/login/" %}
-                        <li class="dropdown">
-                            <button class="btn btn-inverse btn-login" data-toggle="dropdown">{% trans %}Log In{% endtrans %}</button>
-                            <div class="dropdown-menu well">
-                                <form id="form_login_user" action="{{ uri_for("login") }}" method="post" class="auth-at-dropdown">
-                                    <fieldset>
-                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-                                        <div class="control-group">
-                                            <label class="control-label" for="l_username">{% trans %}Username{% endtrans %}</label>
-                                            <div class="controls">
-                                                <input class="input-xlarge focused required" id="l_username" name="username" type="text" value="">
-                                            </div>
-                                        </div>
-                                        <div class="control-group">
-                                            <label class="control-label" for="l_password">{% trans %}Password{% endtrans %}</label>
-                                            <div class="controls">
-                                                <input class="input-xlarge focused required" id="l_password" name="password" type="password" value="">
-                                            </div>
-                                        </div>
-                                        <div class="control-group row-fluid">
-                                            <label class="checkbox span8">
-                                                <input type="checkbox" name="remember_me" id="remember_me" value="on">
-                                                {% trans %}Remember me?{% endtrans %}
-                                            </label>
-                                            <button type="submit" class="btn-login btn-inverse btn">{% trans %}Log In{% endtrans %}</button>
-                                        </div>
-                                    </fieldset>
-                                </form>
-                          </div>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </div><!-- /.nav-collapse -->
-              </div><!-- /navbar-container -->
-            </div><!-- /navbar-inner -->
-        </div><!-- /navbar -->
-        {% endblock %}
+    <div id="page">
+      {% block navbar %}
+      <div class="navbar navbar-fixed-top">
+          <div class="navbar-inner">
+            <div class="navbar-container">
+              <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                  <span class="icon-chevron-down icon-white"></span>
+              </button>
+              <a class="brand" href="/">
+                <img alt="TinyProbe" height="18" src="/img/logo.png" style="margin-bottom: -1px;" width="18"><span>TinyProbe</span>
+              </a>
+              <div class="nav-collapse">
+                  <ul class="nav pull-right nav-pills">
+                      {% block extra_nav %}{% endblock %}
+                      {% if user_id %}
+                      <li class="dropdown">
+                          <button class="btn btn-inverse" data-toggle="dropdown">@{{ username }} <b class="caret"></b></button>
+                          <ul class="dropdown-menu">
+                              <li><a href="{{ uri_for("shell") }}" target="_blank">{% trans %}New Shell{% endtrans %}</a></li> 
+                              <li><a href="{{ uri_for("apps") }}">{% trans %}My Apps{% endtrans %}</a></li>                               
+                              <li class="divider"></li>
+                              <li><a href="{{ uri_for("edit-profile") }}">{% trans %}Edit Profile{% endtrans %}</a></li>
+                              <li><a href="{{ uri_for("edit-email") }}">{% trans %}Change Email{% endtrans %}</a></li>
+                              <li><a href="{{ uri_for("edit-password") }}">{% trans %}Change Password{% endtrans %}</a></li>                              
+                              <li class="divider"></li>
+                              <li><a href="{{ logout_url }}">{% trans %}Logout{% endtrans %}</a></li>
+                          </ul>
+                      </li>
+                      {% elif path != "/login/" %}
+                      <li class="dropdown">
+                          <button class="btn btn-inverse btn-login" data-toggle="dropdown">{% trans %}Log In{% endtrans %}</button>
+                          <div class="dropdown-menu well">
+                              <form id="form_login_user" action="{{ uri_for("login") }}" method="post" class="auth-at-dropdown">
+                                  <fieldset>
+                                      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                                      <div class="control-group">
+                                          <label class="control-label" for="l_username">{% trans %}Username{% endtrans %}</label>
+                                          <div class="controls">
+                                              <input class="input-xlarge focused required" id="l_username" name="username" type="text" value="">
+                                          </div>
+                                      </div>
+                                      <div class="control-group">
+                                          <label class="control-label" for="l_password">{% trans %}Password{% endtrans %}</label>
+                                          <div class="controls">
+                                              <input class="input-xlarge focused required" id="l_password" name="password" type="password" value="">
+                                          </div>
+                                      </div>
+                                      <div class="control-group row-fluid">
+                                          <label class="checkbox span8">
+                                              <input type="checkbox" name="remember_me" id="remember_me" value="on">
+                                              {% trans %}Remember me?{% endtrans %}
+                                          </label>
+                                          <button type="submit" class="btn-login btn-inverse btn">{% trans %}Log In{% endtrans %}</button>
+                                      </div>
+                                  </fieldset>
+                              </form>
+                        </div>
+                      </li>
+                      {% endif %}
+                  </ul>
+              </div><!-- /.nav-collapse -->
+            </div><!-- /navbar-container -->
+          </div><!-- /navbar-inner -->
+      </div><!-- /navbar -->
+      {% endblock %}
 
-        {% block hero %}      
-        {% endblock %}
+      {% block hero %}      
+      {% endblock %}
 
-        <div id="content" class="container xled">
-            {% block header %}
-            <header class="subhead" id="overview">
-                {% block header_title_lead %}{% endblock %}
-            </header>
-            {% endblock %}
+      <div id="content" class="container xled">
+          {% block header %}
+          <header class="subhead" id="overview">
+              {% block header_title_lead %}{% endblock %}
+          </header>
+          {% endblock %}
 
-            {% if messages|safe %}
-            	{% for message in messages %}
-                <p class="alert alert-{{ message[1]|safe }}">
-                    <a class="close" data-dismiss="alert">×</a>
-                    {{ message[0]|safe }}
-                </p>
-                {% endfor %}
-            {% endif %}
+          {% if messages|safe %}
+          	{% for message in messages %}
+              <p class="alert alert-{{ message[1]|safe }}">
+                  <a class="close" data-dismiss="alert">×</a>
+                  {{ message[0]|safe }}
+              </p>
+              {% endfor %}
+          {% endif %}
 
-            {% block content %}{% endblock %}
-            <div class="push"></div>
-        </div><!-- /content -->
-    
-    </div><!-- /page -->
+          {% block content %}{% endblock %}
+          <div class="push"></div>
+      </div><!-- /content -->
+  
+  </div><!-- /page -->
 
-    {% block footer %}
-    <footer>
+  {% block footer %}
+  <footer>
+    <div class='container'>
+      <div class='row'>
+        <div class='span12'>
+          <div class='row'>
+            <div class='span3'>
+              <h4>Product</h4>
+              <ul class='unstyled'>
+                <li>
+                  <a href='/shell#demo'>Demo</a>
+                </li>
+                <li>
+                  <a href='/features'>Features</a>
+                </li>
+                <li>
+                  <a href='/company/pricing'>Pricing</a>
+                </li>
+                <li>
+                  <a href='/signup'>Sign Up</a>
+                </li>
+              </ul>
+            </div>
+            <div class='span3'>
+              <h4>Company</h4>
+              <ul class='unstyled'>
+                <li>
+                  <a href='/blog'>Blog</a>
+                </li>
+                <li>
+                  <a href='/about'>About</a>
+                </li>
+                <li>
+                  <a href='/privacy'>Privacy</a>
+                </li>
+                <li>
+                  <a href='/terms'>Terms of Use</a>
+                </li>
+              </ul>
+            </div>
+            <div class='span3'>
+              <h4>Help</h4>
+              <ul class='unstyled'>
+                <li>
+                  <a href='/support'>Support</a>
+                </li>
+                <li>
+                  <a href='/docs'>Documentation</a>
+                </li>
+                <li>
+                  <a href='http://github.com/tinyprobe'>Code</a>
+                </li>
+              </ul>
+            </div>
+            <div class='span3'>
+              <h4>Follow</h4>
+              <ul class='unstyled'>
+                <li>
+                  <div class="span3" id="elsewhere-icons">
+                    <a class="twitter" href="https://twitter.com/tinyprobe" title="Follow @TinyProbe on Twitter">
+                      Twitter
+                    </a>
+                    <a class="google" href="https://plus.google.com/tinyprobe" title="Check out TinyProbe on Google+">
+                      Facebook
+                    </a>
+                    <a class="github" href="http://github.com/tinyprobe" title="Help Hack our Code">
+                      Blog
+                    </a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id='footer-floor'>
       <div class='container'>
         <div class='row'>
-          <div class='span12'>
-            <div class='row'>
-              <div class='span3'>
-                <h4>Product</h4>
-                <ul class='unstyled'>
-                  <li>
-                    <a href='/shell#demo'>Demo</a>
-                  </li>
-                  <li>
-                    <a href='/features'>Features</a>
-                  </li>
-                  <li>
-                    <a href='/company/pricing'>Pricing</a>
-                  </li>
-                  <li>
-                    <a href='/signup'>Sign Up</a>
-                  </li>
-                </ul>
-              </div>
-              <div class='span3'>
-                <h4>Company</h4>
-                <ul class='unstyled'>
-                  <li>
-                    <a href='/blog'>Blog</a>
-                  </li>
-                  <li>
-                    <a href='/about'>About</a>
-                  </li>
-                  <li>
-                    <a href='/privacy'>Privacy</a>
-                  </li>
-                  <li>
-                    <a href='/terms'>Terms of Use</a>
-                  </li>
-                </ul>
-              </div>
-              <div class='span3'>
-                <h4>Help</h4>
-                <ul class='unstyled'>
-                  <li>
-                    <a href='/support'>Support</a>
-                  </li>
-                  <li>
-                    <a href='/docs'>Documentation</a>
-                  </li>
-                  <li>
-                    <a href='http://github.com/tinyprobe'>Code</a>
-                  </li>
-                </ul>
-              </div>
-              <div class='span3'>
-                <h4>Follow</h4>
-                <ul class='unstyled'>
-                  <li>
-                    <div class="span3" id="elsewhere-icons">
-                      <a class="twitter" href="https://twitter.com/tinyprobe" title="Follow @TinyProbe on Twitter">
-                        Twitter
-                      </a>
-                      <a class="google" href="https://plus.google.com/tinyprobe" title="Check out TinyProbe on Google+">
-                        Facebook
-                      </a>
-                      <a class="github" href="http://github.com/tinyprobe" title="Help Hack our Code">
-                        Blog
-                      </a>
-                    </div>
-                  </li>
-                </ul>
-              </div>
+          <div class='span10'>
+            <div id='copyright'>
+              <p>&copy; 2012 TinyProbe, Inc. All Rights Reserved.</p>
             </div>
           </div>
         </div>
       </div>
-      <div id='footer-floor'>
-        <div class='container'>
-          <div class='row'>
-            <div class='span10'>
-              <div id='copyright'>
-                <p>&copy; 2012 TinyProbe, Inc. All Rights Reserved.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
-    {% endblock %}
+    </div>
+  </footer>
+  {% endblock %}
 
 
-    <!-- JavaScript at the bottom for fast page loading -->
-    <script src="/js/libs/bootstrap.min.js"></script>
+  <!-- JavaScript at the bottom for fast page loading -->
+  <script src="/js/libs/bootstrap.min.js"></script>
 
-    <!-- scripts concatenated and minified via build script -->
-    <script src="/js/plugins.js"></script>
-    <script src="/js/script.js"></script>
+  <!-- scripts concatenated and minified via build script -->
+  <script src="/js/plugins.js"></script>
+  <script src="/js/script.js"></script>
 
-    {% block mediaJS %}{% endblock %}
-    <!-- fix yellow input boxes on webkit -->
-    <script type="text/javascript">
-      if (navigator.userAgent.toLowerCase().indexOf("chrome") >= 0) {
-        $(window).load(function(){
-            setTimeout(function(){
-              $('input:-webkit-autofill').each(function(){
-                  var text = $(this).val();
-                  var name = $(this).attr('name');
-                  $(this).after(this.outerHTML).remove();
-                  $('input[name=' + name + ']').val(text);
-              });
-            }, 200);
-        });
-      }
-    </script>
-    <!-- end scripts -->
+  {% block mediaJS %}{% endblock %}
+  <!-- fix yellow input boxes on webkit -->
+  <script type="text/javascript">
+    if (navigator.userAgent.toLowerCase().indexOf("chrome") >= 0) {
+      $(window).load(function(){
+          setTimeout(function(){
+            $('input:-webkit-autofill').each(function(){
+                var text = $(this).val();
+                var name = $(this).attr('name');
+                $(this).after(this.outerHTML).remove();
+                $('input[name=' + name + ']').val(text);
+            });
+          }, 200);
+      });
+    }
+  </script>
+  <!-- end scripts -->
 </body>
 </html>

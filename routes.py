@@ -52,6 +52,7 @@ _routes = [
     RedirectRoute('/company/', handlers.CompanyHandler, name='company', strict_slash=True),
     RedirectRoute('/company/pricing/', handlers.CompanyHandler, name='pricing', strict_slash=True),
     RedirectRoute('/contact/', handlers.ContactHandler, name='contact', strict_slash=True),
+    RedirectRoute('/forums/', handlers.ForumHandler, name='forums', strict_slash=True),
 ]
 
 def get_routes():

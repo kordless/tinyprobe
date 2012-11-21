@@ -14,3 +14,8 @@ indexes:
   properties:
   - name: owner
   - name: command
+
+- kind: Apps
+  properties:
+  - name: owner
+  - name: command

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+{% set date_format = "%a, %d %b %Y %H:%M:%S GMT" %}
+<channel>
+<title>{{ blog_title|escape }}</title>
+<description>{{ bio }}</description>
+<language>en</language>
+<copyright>{{ author }}</copyright>
+<pubDate>{{ blog_last_updated }}</pubDate>
+<link>http://{{ host }}/blog/{{ feed_username }}</link>
+<ttl>30</ttl>
+<atom:link rel="self" href="{{ host }}/blog/{{ user_slug }}feed/rss/" title="{{ blog_title|escape }}" type="application/rss+xml"/>
+{% for entry in entries %}
+<item>
+<title>{{ entry.title|escape }}</title>
+<description>{{ entry.summary }}</description>
+<link>http://{{ host }}/blog/{{ user_slug }}/{{ entry.article_path }}</link>
+<guid isPermaLink="true">http://www.stackgeek.com/blog/{{ user_slug }}{{ entry.article_path }}</guid>
+<pubDate>{{ entry.created.strftime(date_format) }}</pubDate>
+<source url="{{ host }}/{{ user_slug }}">http://{{ host }}/{{ user_slug }}</source>
+</item>
+{{ entry.post_html }}
+{% endfor %}
+</channel>
+</rss>

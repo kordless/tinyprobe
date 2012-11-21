@@ -1,0 +1,66 @@
+{% extends base_layout %}
+
+{% block header_title %}
+        {% trans %}Sign Up{% endtrans %}
+{% endblock %}
+
+{% block header_title_lead %}
+    <h1>Forums</h1>
+    <p class="lead">
+      Welcome to the TinyProbe forums.  You'll need to have an account with Google and be logged in to participate!
+    </p>
+{% endblock %}
+
+
+{% block extra_nav %}
+    <li>
+    	<a class="" href="/">Home</a>
+    </li>
+	<li>
+		<a class="active" href="/forums">Forums</a>
+	</li>
+	<li>
+		<a class="" href="/tour">Take a Tour</a>
+	</li>
+	<li>
+		<a class="" href="{{ uri_for("pricing")}}">Pricing & Signup</a>
+	</li>
+{% endblock %}
+
+{% block content %}
+<iframe id="forum_embed"
+  src="javascript:void(0)"
+  scrolling="no"
+  frameborder="0"
+  width="1120"
+  height="900">
+</iframe>
+<script type="text/javascript">
+  document.getElementById('forum_embed').src =
+     'https://groups.google.com/forum/embed/?place=forum/tinyprobe'
+     + '&showsearch=true&showpopout=true&showtabs=false'
+</script>
+{% endblock %}
+
+{% block mediaJS %}
+<script type="text/javascript">
+    $().ready(function() {
+        $("#form_register").validate({
+            submitHandler: function(form) {
+                    form.submit();
+            },
+            rules: {
+                password: 'required',
+                c_password: {
+                    required: true,
+                    equalTo: '#password'
+                }
+            },
+            errorPlacement: function(error, element) {
+                element.parent().parent().addClass("error");
+                error.addClass("help-inline").appendTo( element.parent() );
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -138,6 +138,16 @@ class App(ndb.Model):
 
 
     @classmethod
+    def delete_by_user(cls, user):
+        app_query = cls.query().filter(cls.owner == user)
+        apps = app_query.fetch()
+        keys = []
+        for x in apps:
+            keys.append(x.key)
+        return ndb.delete_multi(keys)
+
+
+    @classmethod
     def get_by_user_and_command(cls, user, command):
         # get() a single app by user/command
         gist = cls.query(cls.owner == user, cls.command == command).get()

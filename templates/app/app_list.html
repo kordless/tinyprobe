@@ -12,6 +12,97 @@
 {% endblock %}
 
 {% block content %}
+    <div id="cards" class="row bottom">
+        <div id="foo" class="card maps">
+          <div class="front">
+            <img src="/img/arbor_thumnail.png" width="225" height="140">
+            <h3 class="tool_name">GeoCommons</h3>
+            <p>A public community and set of tools to access, visualize and analyze data with compelling map visualizations.</p>
+            <p><a href="http://geocommons.com/" title="Official Website">http://geocommons.com</a></p>
+          </div>
+          <div class="back">
+            <h3>GeoCommons</h3>
+            <p>
+            <strong>Type: </strong>Web Application &amp; API<br/>
+            <strong>Technology: </strong>JavaScript, Ruby<br/>
+            <strong>License: </strong><a href="http://geocommons.com/help/Open_Source">Various</a><br/>
+          </p>
+            <h4>Links</h4>
+            <ul>
+              <li><a href="http://geocommons.com/" title="Official Website">Website</a></li>
+              <li><a href="http://geocommons.com/api/" title="API Documentation">API Documentation</a></li>
+              <li><a href="http://github.com/geocommons/" title="GitHub User">GitHub User</a></li>
+            </ul>
+          </div>
+        </div>
+        <div id="bar" class="card maps charts data">
+          <div class="front">
+            <img src="/img/degrafa_thumbnail.png" width="225" height="140">
+            <h3 class="tool_name">Google Fusion Tables</h3>
+            <p>A web application that makes it easy to host, manage, collaborate on, visualize, and publish data tables.</p>
+            <p><a href="http://www.google.com/fusiontables" title="Official Website">http://www.google.com/fusiontables</a></p>
+          </div>
+          <div class="back">
+            <h3>Google Fusion Tables</h3>
+            <p>
+            <strong>Type: </strong>Web Application &amp; API<br/>
+            <strong>Technology: </strong>JavaScript, Flash<br/>
+            <strong>License: </strong>Free to use<br/
+          </p>
+            <h4>Links</h4>
+            <ul>
+              <li><a href="http://www.google.com/fusiontables/" title="Official Website">Website</a></li>
+              <li><a href="https://sites.google.com/site/fusiontablestalks/stories/" title="Example Gallery">Example Gallery</a></li>
+              <li><a href="https://developers.google.com/fusiontables/" title="API Documentation">API Documentation</a></li>
+            </ul>
+          </div>
+        </div>
+        <div id="foo" class="card maps">
+          <div class="front">
+            <img src="/img/arbor_thumnail.png" width="225" height="140">
+            <h3 class="tool_name">GeoCommons</h3>
+            <p>A public community and set of tools to access, visualize and analyze data with compelling map visualizations.</p>
+            <p><a href="http://geocommons.com/" title="Official Website">http://geocommons.com</a></p>
+          </div>
+          <div class="back">
+            <h3>GeoCommons</h3>
+            <p>
+            <strong>Type: </strong>Web Application &amp; API<br/>
+            <strong>Technology: </strong>JavaScript, Ruby<br/>
+            <strong>License: </strong><a href="http://geocommons.com/help/Open_Source">Various</a><br/>
+          </p>
+            <h4>Links</h4>
+            <ul>
+              <li><a href="http://geocommons.com/" title="Official Website">Website</a></li>
+              <li><a href="http://geocommons.com/api/" title="API Documentation">API Documentation</a></li>
+              <li><a href="http://github.com/geocommons/" title="GitHub User">GitHub User</a></li>
+            </ul>
+          </div>
+        </div>
+        <div id="bar" class="card maps charts data">
+          <div class="front">
+            <img src="/img/degrafa_thumbnail.png" width="225" height="140">
+            <h3 class="tool_name">Google Fusion Tables</h3>
+            <p>A web application that makes it easy to host, manage, collaborate on, visualize, and publish data tables.</p>
+            <p><a href="http://www.google.com/fusiontables" title="Official Website">http://www.google.com/fusiontables</a></p>
+          </div>
+          <div class="back">
+            <h3>Google Fusion Tables</h3>
+            <p>
+            <strong>Type: </strong>Web Application &amp; API<br/>
+            <strong>Technology: </strong>JavaScript, Flash<br/>
+            <strong>License: </strong>Free to use<br/
+          </p>
+            <h4>Links</h4>
+            <ul>
+              <li><a href="http://www.google.com/fusiontables/" title="Official Website">Website</a></li>
+              <li><a href="https://sites.google.com/site/fusiontablestalks/stories/" title="Example Gallery">Example Gallery</a></li>
+              <li><a href="https://developers.google.com/fusiontables/" title="API Documentation">API Documentation</a></li>
+            </ul>
+          </div>
+        </div>
+    </div>
+
 	<table class="table table-striped table-hover">
 	  <thead>
 	    <tr>
@@ -28,7 +119,7 @@
 	  			<td>{{item.name}}</td>
 	  			<td>{{item.description}}</td>
 	  			<td>
-	  				<a class="btn btn-small" title="edit" href="{{item.url}}"><i class="icon-edit"></i></a>
+	  				<a class="btn btn-small" title="edit" href="{{item.id}}"><i class="icon-edit"></i></a>
 	  				<a class="btn btn-small" title="share" href="#"><i class="icon-share"></i></a>
 	  				<a class="btn btn-small" title="favorite" href="#"><i class="icon-star"></i></a>
 	  			</td>
@@ -37,13 +128,15 @@
 	  </tbody>
 	</table>
     <div class="form-actions">
-        <a href="{{ uri_for("apps-new") }}" class="btn btn-inverse btn-large">{% trans %}Create an App{% endtrans %}</a>
-        <a id="refresh_button" class="btn btn-inverse btn-large">{% trans %}Refresh Apps{% endtrans %}</a>
+        <a href="{{ uri_for("apps-new") }}" class="btn btn-inverse btn-large">{% trans %}New{% endtrans %}</a>
+        <a title="Sync apps with user's gists." id="refresh_button" class="btn btn-inverse btn-large">{% trans %}Sync{% endtrans %}</a>
     </div>
 {% endblock %}
 
 {% block mediaJS %}
 <script type="text/javascript" src="/_ah/channel/jsapi"></script>
+<script type="text/javascript" src="/js/libs/jquery.isotope.min.js"></script>
+<script type="text/javascript" src="/js/libs/jquery.flippy.js"></script>
 <script type="text/javascript">
     $().ready(function() {
         // watch for refresh_button to be clicked
@@ -56,6 +149,7 @@
                 })
             });
         });
+
         // listen to our refresh channel for page reload
         onMessage = function() {
             window.location.reload();
@@ -64,21 +158,37 @@
         socket = channel.open();
         socket.onmessage = onMessage;
 
-        // deal with forms
-        $("#form_register").validate({
-            submitHandler: function(form) {
-                    form.submit();
-            },
-            rules: {
-                password: 'required',
-                c_password: {
-                    required: true,
-                    equalTo: '#password'
+        // isotope & card flip
+        var $container = $('#cards');
+        $container.isotope({
+            itemSelector: '.card',
+            layoutMode: 'cellsByRow',
+            getSortData : {
+                name : function ( $elem ) {
+                    var name = $elem.find('.tool_name').text();
+                    return name;
                 }
             },
-            errorPlacement: function(error, element) {
-                element.parent().parent().addClass("error");
-                error.addClass("help-inline").appendTo( element.parent() );
+            sortBy : 'name',
+            cellsByRow : { columnWidth : 340 }
+        });
+        $('.card .front').append('<span class="flip_back"></span>');
+        $('.card .back').append('<span class="flip_front"></span>');
+        $('.card').click(function(e){
+            if($(this).hasClass('flip')){
+                if(e.target.tagName == "A"){
+                    window.open(e.target.href);
+                    e.preventDefault();
+                } else {
+                    $(this).removeClass('flip');
+                }
+            } else {
+                if(e.target.tagName == "A"){
+                window.open(e.target.href);
+                e.preventDefault();
+                } else {
+                    $(this).addClass('flip');
+                }
             }
         });
     });

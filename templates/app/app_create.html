@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block header_title_lead %}
-    <h1><a href="{{ uri_for("apps") }}">My Apps</a> / Create an App</h1>
+    <h1><a href="{{ uri_for("apps") }}">My Apps</a> / Create a New App</h1>
     <p class="lead">
         Enter a name, description and command name for a new TinyProbe app.  A new app stub will be stored as a <a href="http://gist.github.com/">gist</a> in your Github account where you can edit it.  You can also <a href="{{ uri_for("apps-public") }}">fork shared apps</a> written by other TinyProbe users. 
     </p>
@@ -19,7 +19,7 @@
             {{ macros.input(form, "appdescription", _("Description"), placeholder=_("Graphs signup events for Buy Local's website over the last week."), class="input-xlong focused required") }}
             {{ macros.input(form, "appcommand", _("Command Line Name"), placeholder=_("awesome"), class="input-xlarge focused required") }}
             <div class="form-actions">
-                <button type="submit" class="btn btn-inverse btn-large">{% trans %}Create App{% endtrans %}</button>
+                <button type="submit" class="btn btn-inverse btn-large">{% trans %}Create{% endtrans %}</button>
             </div>
         </fieldset>
     </form>
