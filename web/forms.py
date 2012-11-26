@@ -33,6 +33,12 @@ class AppForm(BaseForm):
     appdescription = fields.TextField(_('App_Description'), [validators.Required(), validators.Length(max=140)], id='appdescription')
     appcommand = fields.TextField(_('App_Command'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH), validators.regexp(utils.ALPHANUMERIC_REGEXP, message=_('Command string is invalid. Letters and numbers only!'))], id='appcommand')
 
+class BlogArticleForm(BaseForm):
+    title = fields.TextField(_('Article_Title'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)], id='title')
+    summary = fields.TextField(_('Article_Summary'), [validators.Required(), validators.Length(max=140)], id='summary')
+    article_type = fields.SelectField(_('Article Type'), [validators.Required()], choices=[('post', 'Blog Post'), ('guide', 'Guide'), ('video', 'Video')])   
+    pass
+
 class CurrentPasswordMixin(BaseForm):
     current_password = fields.TextField(_('Password'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)])
 

@@ -124,6 +124,64 @@ class SocialUser(ndb.Model):
     def open_id_providers():
         return [k for k,v in SocialUser.PROVIDERS_INFO.items() if v['uri']]
 
+
+# blog articles for admins only
+class Article(ndb.Model):
+    created = ndb.DateTimeProperty(auto_now_add=True)
+    updated = ndb.DateTimeProperty(auto_now=True)
+    owner = ndb.KeyProperty(kind=User)
+    title = ndb.StringProperty()
+    summary = ndb.StringProperty()
+    url = ndb.StringProperty()
+    slug = ndb.StringProperty()
+    article_type = ndb.StringProperty()
+    gist_id = ndb.StringProperty()
+    draft = ndb.BooleanProperty(default=True)
+    
+    @classmethod
+    def delete_by_user(cls, user):
+        article_query = cls.query().filter(cls.owner == user)
+        articles = article_query.fetch()
+        keys = []
+        for x in articles:
+            keys.append(x.key)
+        return ndb.delete_multi(keys)
+    
+
+    @classmethod
+    def get_by_user_and_gist_id(cls, user, gist_id):
+        # get() a single article by user/gist_id
+        gist = cls.query(cls.owner == user, cls.gist_id == gist_id).get()
+        # logging.info("value is: %s" % gist)
+        return gist
+
+
+    @classmethod
+    def get_all(cls):
+        article_query = cls.query().filter().order(-Article.created)
+        gists = article_query.fetch()
+        return gists
+
+
+    @classmethod
+    def get_by_user(cls, user):
+        article_query = cls.query().filter(cls.owner == user).order(-Article.created)
+        gists = article_query.fetch()
+        return gists
+
+    @classmethod
+    def get_by_user_and_type(cls, user, article_type):
+        article_query = cls.query().filter(cls.owner == user, cls.article_type == article_type).order(-Article.created)
+        gists = article_query.fetch()
+        return gists
+
+    @classmethod
+    def get_by_slug(cls, slug):
+        article_query = cls.query().filter(cls.slug == slug)
+        gist = article_query.get()
+        return gist
+
+
 class App(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)

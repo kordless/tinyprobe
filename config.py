@@ -15,15 +15,14 @@ webapp2_config['webapp2_extras.jinja2'] = {
     'environment_args': {'extensions': ['jinja2.ext.i18n']},
 }
 
+# jinja2 base layout templates
+base_layout = 'base.html'
+
+# locale settings
 app_lang = 'en'
-# Locale code = <language>_<territory> (ie 'en_US')
-# to pick locale codes see http://cldr.unicode.org/index/cldr-spec/picking-the-right-language-code
-# also see http://www.sil.org/iso639-3/codes.asp
-# Language codes defined under iso 639-1 http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-# Territory codes defined under iso 3166-1 alpha-2 http://en.wikipedia.org/wiki/ISO_3166-1
-#locales = ['en_US', 'es_ES', 'it_IT', 'zh_CN', 'id_ID', 'fr_FR', 'de_DE']
 locales = ['en_US']
 
+# me bitches
 contact_sender = "kordless@gmail.com"
 contact_recipient = "kordless@gmail.com"
 
@@ -50,18 +49,27 @@ else:
 	github_client_id = 'd43f79b4e7c21fa43454'
 	github_client_secret = 'a64ddfdc29dcf0c7590147476014950bf160883f'
 
+# name to use to ID TinyProbe gists
+gist_manifest_name = 'tinyprobe.manifest'
+gist_javascript_name = 'tinyprobe.js'
+gist_markdown_name = 'tinyprobe.md'
+gist_preview_image = 'http://www.tinyprobe.com/img/screenshot.png'
+
+# gist memcache settings for blog
+gist_article_manifest_name = 'tinyprobe-article.manifest'
+gist_article_markdown_name = 'tinyprobe-article.md'
+memcache_expire_time = 604800
+
+# html whitelist for bleached articles
+bleach_tags = ['p', 'em', 'strong', 'code', 'h1', 'h2', 'h3', 'h4', 'h5', 'td', 'li', 'ul', 'ol', 'table', 'tbody', 'thead', 'iframe', 'tr', 'th', 'span',  'pre', 'i', 'button', 'img', 'a']
+bleach_attributes = {'i': ['class'], 'a': ['href', 'rel'], 'table': ['class'], 'img': ['src', 'alt'], 'iframe': ['src', 'width', 'height', 'frameborder'], 'pre': ['class']}
+
 # get your own recaptcha keys by registering at www.google.com/recaptcha
 captcha_public_key = "6LeZidUSAAAAAH4URz_h0kKl-NDciRnE3Nw8ajJd"
 captcha_private_key = "6LeZidUSAAAAAI1L48D6X2YKToFCmCpXf8VyCHvK"
 
 # tracking shizzle
 google_analytics_code = "UA-34233674-1"
-
-# name to use to ID TinyProbe gists
-gist_manifest_name = 'tinyprobe.manifest'
-gist_javascript_name = 'tinyprobe.js'
-gist_markdown_name = 'tinyprobe.md'
-gist_preview_image = 'http://www.tinyprobe.com/img/screenshot.png '
 
 # reserved commands for shell to help prevent apps from using them
 reserved_commands = ['graph', 'search', 'clear', 'quit', 'close', 'exit', 'help', 'logout', 'curl', 'wget', 'irc', 'status', 'theme']

@@ -19,3 +19,9 @@ indexes:
   properties:
   - name: owner
   - name: command
+
+- kind: Article
+  properties:
+  - name: owner
+  - name: created
+    direction: desc

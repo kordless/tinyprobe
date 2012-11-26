@@ -1,0 +1,34 @@
+{% extends base_layout %}
+
+<!-- Set Title -->
+{% block title %}
+  {% trans %}About the Madness{% endtrans %}
+{% endblock %}
+
+{% block extra_nav %}{{ macros.nav_menu('', user_id) }}{% endblock %}
+
+{% block content %}
+<h1>About Us</h1>
+<p>TinyProbe is a Bay Area run company focused on providing a highly customizable analytics tool kit for developers.</p>
+
+<p>If you are interested in big data or cloud technologies and have a hankering learning or helping others configure, setup and deploy their own cloud infrastructure, <a href="/preregister/">sign up today</a>!  We'd love you to join us.</p>
+
+<p class='lead'>You can contact us by <a href="/contact/">using our web form</a> or by transcribing bits of the following information:</p>
+<div id="address">
+  <h4>TinyProbe Inc.</h4>
+  <p>1092 Sanders Drive&nbsp;<br>
+  Moraga, CA 94556<br>
+  email: info at tinyprobe dot com<br/>
+  (510) 230-3482</p></div>
+  <p>&nbsp;</p>
+  <div>
+    <ul class="thumbnails">
+      <li class="span5" float="right">
+        <div class="thumbnail">
+          <a class="thumbnail" href="http://g.co/maps/p7kk2"><img alt="Map to StackGeek" src="/img/map.png"></a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

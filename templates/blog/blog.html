@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block rssfeed %}
-	<link rel="alternate" type="application/rss+xml" title="Feed for {{ username }} on StackGeek.com" href="http://www.stackgeek.com/blog/{{ username }}/feed/rss/" />
+	<link rel="alternate" type="application/rss+xml" title="Feed for TinyProbe" href="http://{{ item.article_host }}/blog/feed/rss/" />
 {% endblock %}
 
 {% block extra_nav %}
@@ -20,7 +20,7 @@
 <div class="row blog">
 	{% if is_mobile %}
 	<div class="span3">
-		<a class="twitter-timeline" href="https://twitter.com/stackgeek" data-widget-id="264213994309558272">Tweets by @stackgeek</a>
+		<a class="twitter-timeline" href="https://twitter.com/tinyprobe" data-widget-id="271067215346941952">Tweets by @tinyprobe</a>
 		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 	</div>
 	{% endif %}
@@ -29,16 +29,13 @@
 		<div class="apost">
 			<h2 class="postdetail"><a href="/blog/{{ item.article_owner }}/{{ item.article_type }}/{{ item.article_slug }}">{{ item.article_title }}</a></h2>
 			<div class="date_social">
-    			<div class="date"><span class="label label-important">{{ item.created }}</span></div>
-				{% if user_id %}
-					{{ macros.fork_gist_widget(item.article_owner, item.article_id) }}
-				{% endif %}
+    			<div class="date"><span class="label label-inverse">{{ item.created }}</span></div>
 				{{ macros.g_plus_widget("http://%s/blog/%s/%s/%s"%(item.article_host, item.article_owner, item.article_type, item.article_slug)) }}
 				{{ macros.tweet_widget("http://%s/blog/%s/%s/%s"%(item.article_host, item.article_owner, item.article_type, item.article_slug), item.article_summary) }}
 			</div>
 			<p>by <a href="/blog/{{ item.article_owner }}">{{ item.article_owner }}</a>
 			{{ item.article_html }}
-			<a class="btn" href="/blog/{{ item.article_owner }}/{{ item.article_type }}/{{ item.article_slug }}#comments">View Comments</a>
+			<a class="btn" href="/blog/{{ item.article_slug }}#comments">View Comments</a>
 		</div>
 	{% endfor %}
 	</div>
@@ -48,12 +45,12 @@
         <div class="recent_posts">
           <h3>Recent Posts</h3>
           {% for item in blogposts %}
-            <p><a href="{{ 'http://%s/blog/%s/%s/%s' % (item.article_host, item.article_owner, item.article_type, item.article_slug) }}">{{ item.article_title }}</a></p>
+            <p><a href="{{ 'http://%s/blog/%s' % (item.article_host, item.article_slug) }}">{{ item.article_title }}</a></p>
             <p class="recent_author">by <a href="#">{{ item.article_owner }}</a>
           {% endfor %}
         </div>		
-		<a class="twitter-timeline" href="https://twitter.com/stackgeek" data-widget-id="264213994309558272">Tweets by @stackgeek</a>
-		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+			<a class="twitter-timeline" href="https://twitter.com/tinyprobe" data-widget-id="271067215346941952">Tweets by @tinyprobe</a>
+			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 	</div>
 	{% endif %}
 </div>

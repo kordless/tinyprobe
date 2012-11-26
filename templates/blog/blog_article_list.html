@@ -14,9 +14,9 @@
 {% endblock %}
 
 {% block header_title_lead %}
-    <h1><a href="/blog/{{ username }}">{{ username }}</a> / articles</h1>
+    <h1><a href="/blog/">blog</a> / articles</h1>
     <p class="lead">
-      Articles are stored in <a href="http://gist.github.com/mine">Gists</a> on your Github account.  You can also <a href="{{ uri_for("blog") }}">browse published articles</a> shared by other StackGeek users.
+      Articles are stored in <a href="http://gist.github.com/mine">Gists</a> on your Github account.  Publishing them makes them visible on TinyProbe's blog.
     </p>
 {% endblock %}
 
@@ -30,7 +30,7 @@
       <h3>Confirm Deletion</h3>
     </div>
     <div class="modal-body">
-      <p>Deleting this article will remove it from your StackGeek acccount and delete its gist from your Github account.  Are you sure that's what you want to do?</p>
+      <p>Deleting this article will remove it from your acccount and delete its gist from your Github account.  Are you sure that's what you want to do?</p>
     </div>
     <div class="modal-footer">
       <a href="#" id="cancel-button" class="btn btn-inverse" data-dismiss="modal">Cancel</a>
@@ -51,9 +51,9 @@
 	  <tbody>
 	  	{% for item in articles %}
 	  		<tr>
-          <td><div class="date"><span class="label label-important">{{item.created.strftime(date_format)}}</span></div></td>
+          <td><div class="date"><span class="label label-inverse">{{item.created.strftime(date_format)}}</span></div></td>
           <td><i class="icon-{{ item.article_type }}"></i></td>
-	  			<td><a href="/blog/{{ username }}/{{ item.article_type }}/{{item.slug}}">{{item.title}}</a></td>
+	  			<td><a href="/blog/{{item.slug}}">{{item.title}}</a></td>
 	  			<td>{{item.summary}}</td>
           <td>
             <a id="edit-{{item.gist_id}}" class="btn btn-small" title="edit" href="#"><i class="icon-edit"></i></a>
@@ -68,7 +68,7 @@
 	  </tbody>
 	</table>
     <div class="form-actions">
-        <a href="{{ uri_for("blog-article-create", username=username) }}" class="btn btn-inverse btn-large btn-icon">{% trans %}<i class="icon-pencil icon-white icon-button"></i>New{% endtrans %}</a>
+        <a href="{{ uri_for("blog-article-create") }}" class="btn btn-inverse btn-large btn-icon">{% trans %}<i class="icon-pencil icon-white icon-button"></i>New{% endtrans %}</a>
         <a title="Sync articles with your current gists." id="refresh_button" class="btn btn-inverse btn-large btn-icon">{% trans %}<i class="icon-refresh icon-white icon-button"></i>Sync{% endtrans %}</a>
     </div>
 {% endblock %}
@@ -78,7 +78,6 @@
 <script type="text/javascript" src="/_ah/channel/jsapi"></script>
 <script type="text/javascript">
     $().ready(function() {
-        var username = "{{username}}";
         var channel_token = "{{ channel_token }}";
         var refresh_channel = "{{ refresh_channel }}";
         var csrf_token = "{{ csrf_token() }}";
@@ -111,7 +110,7 @@
             $('#delete').modal();
             $('#delete-button').click(function() {
               $.ajax({
-                url: '/blog/'+username+'/'+article_id+'/?channel_token='+channel_token+'&_csrf_token='+csrf_token,
+                url: '/blog/actions/'+article_id+'/?channel_token='+channel_token+'&_csrf_token='+csrf_token,
                 type: 'DELETE',
                 success:(function() {
                   $(button_id).unbind("click");
@@ -128,7 +127,7 @@
             article_id = this.id.split("-").pop();
             button_id = '#'+this.id;
             $.ajax({
-              url: '/blog/'+username+'/'+article_id+'/refresh/?&_csrf_token='+csrf_token,
+              url: '/blog/actions/'+article_id+'/refresh/?&_csrf_token='+csrf_token,
               type: 'GET',
             });
             console.log(this.id+" clicked");
@@ -149,7 +148,7 @@
             draft = !$('#'+this.id).children('.active').length;
             article_id = this.id.split("-").pop();
             $.ajax({
-              url: '/blog/'+username+'/'+article_id+'/',
+              url: '/blog/actions/'+article_id+'/',
               type: 'PUT',
               data: {_csrf_token: csrf_token, draft: draft},
             });

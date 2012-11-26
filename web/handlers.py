@@ -14,6 +14,8 @@ from webapp2_extras import security
 from webapp2_extras.auth import InvalidAuthIdError, InvalidPasswordError
 from webapp2_extras.i18n import gettext as _
 from webapp2_extras.appengine.auth.models import Unique
+
+# google shizzle
 from google.appengine.api import taskqueue
 
 # local application/library specific imports
@@ -144,31 +146,34 @@ class ContactHandler(BaseHandler):
 
 
 class HomeRequestHandler(BaseHandler):
-    """
-    Handler to show the home page
-    """
-
     def get(self):
-        """ Returns a simple HTML form for home """
+        """ yo, it's the fucking homepage, yo! """
         params = {}
-        return self.render_template('home.html', **params)
+        return self.render_template('site/home.html', **params)
 
 
-class CompanyHandler(BaseHandler):
+class AboutHandler(BaseHandler):
     def get(self):
-        logging.info("value is: %s" % self.request.path)
         params = {}
-        if self.request.path == '/company/pricing/':
-            return self.render_template('company/pricing.html', **params)
-        else:
-            return self.render_template('home.html', **params)
+        return self.render_template('site/about.html', **params)
+
+
+class PricingHandler(BaseHandler):
+    def get(self):
+        params = {}
+        return self.render_template('site/pricing.html', **params)
 
 
 class ForumHandler(BaseHandler):
     def get(self):
         params = {}
-        return self.render_template('company/forums.html', **params)
+        return self.render_template('site/forums.html', **params)
 
+
+class TourHandler(BaseHandler):
+    def get(self):
+        params = {}
+        return self.render_template('site/tour.html', **params)
 
 
 

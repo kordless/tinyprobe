@@ -9,21 +9,11 @@ from web import handlers
 from web.users import userhandlers
 from web.apps import apphandlers
 from web.shell import shellhandlers
+from web.blog import bloghandlers
 
 secure_scheme = 'https'
 
 _routes = [
-    # apps
-    RedirectRoute('/apps/new/', apphandlers.AppsCreateHandler, name='apps-new', strict_slash=True),
-    RedirectRoute('/apps/', apphandlers.AppsListHandler, name='apps', strict_slash=True),
-    RedirectRoute('/apps/refresh/', apphandlers.AppsRefreshHandler, name='apps-refresh', strict_slash=True),
-    RedirectRoute('/apps/public/', apphandlers.AppsPublicHandler, name='apps-public', strict_slash=True),
-    RedirectRoute('/apps/buildlist/', apphandlers.AppsBuildListHandler, name='apps-public', strict_slash=True),
-    RedirectRoute('/apps/<app_id>/', apphandlers.AppsDetailHandler, name='apps-detail', strict_slash=True),
-
-    # shell
-    RedirectRoute('/shell/', shellhandlers.ShellHandler, name='shell', strict_slash=True),
-
     # mail processing
     RedirectRoute('/taskqueue-send-email/', handlers.SendEmailHandler, name='taskqueue-send-email', strict_slash=True),
 
@@ -36,6 +26,7 @@ _routes = [
 
     # user registration
     RedirectRoute('/preregister/', userhandlers.PreRegisterHandler, name='preregister', strict_slash=True),
+    RedirectRoute('/signup/', userhandlers.PreRegisterHandler, name='preregister-signup', strict_slash=True),    
     RedirectRoute('/register/<encoded_email>/', userhandlers.RegisterHandler, name='register', strict_slash=True),
 
     # user settings
@@ -47,12 +38,36 @@ _routes = [
     RedirectRoute('/change-email/<user_id>/<encoded_email>/<token>/', userhandlers.EmailChangedCompleteHandler, name='email-changed-check', strict_slash=True),
     RedirectRoute('/secure/', userhandlers.SecureRequestHandler, name='secure', strict_slash=True),
 
-    # website pages
+    # website
     RedirectRoute('/', handlers.HomeRequestHandler, name='home', strict_slash=True),
-    RedirectRoute('/company/', handlers.CompanyHandler, name='company', strict_slash=True),
-    RedirectRoute('/company/pricing/', handlers.CompanyHandler, name='pricing', strict_slash=True),
+    RedirectRoute('/about/', handlers.AboutHandler, name='company', strict_slash=True),
+    RedirectRoute('/pricing/', handlers.PricingHandler, name='pricing', strict_slash=True),
+    RedirectRoute('/tour/', handlers.TourHandler, name='tour', strict_slash=True),
     RedirectRoute('/contact/', handlers.ContactHandler, name='contact', strict_slash=True),
     RedirectRoute('/forums/', handlers.ForumHandler, name='forums', strict_slash=True),
+
+    # blog handlers
+    RedirectRoute('/blog/', bloghandlers.PublicBlogHandler, name='blog', strict_slash=True),
+    RedirectRoute('/blog/feed/rss/', bloghandlers.PublicBlogRSSHandler, name='blog-rss', strict_slash=True),
+    RedirectRoute('/blog/refresh/', bloghandlers.BlogRefreshHandler, name='blog-refresh', strict_slash=True),
+    RedirectRoute('/blog/buildlist/', bloghandlers.BlogBuildListHandler, name='blog-build', strict_slash=True),
+    RedirectRoute('/blog/menu/<menu_id>', bloghandlers.BlogUserMenuHandler, name='blog-menu', strict_slash=True), # see class for fix info
+    RedirectRoute('/blog/new/', bloghandlers.BlogArticleCreateHandler, name='blog-article-create', strict_slash=True),
+    RedirectRoute('/blog/articles/', bloghandlers.BlogArticleListHandler, name='blog-article-list', strict_slash=True),
+    RedirectRoute('/blog/<article_id>/refresh/', bloghandlers.BlogClearCacheHandler, name='blog-clearcache', strict_slash=True),
+    RedirectRoute('/blog/<slug>', bloghandlers.BlogArticleSlugHandler, name='blog-article-slug', strict_slash=True),
+    RedirectRoute('/blog/actions/<article_id>/', bloghandlers.BlogArticleActionsHandler, name='blog-article-actions', strict_slash=True),
+
+    # apps
+    RedirectRoute('/apps/new/', apphandlers.AppsCreateHandler, name='apps-new', strict_slash=True),
+    RedirectRoute('/apps/', apphandlers.AppsListHandler, name='apps', strict_slash=True),
+    RedirectRoute('/apps/refresh/', apphandlers.AppsRefreshHandler, name='apps-refresh', strict_slash=True),
+    RedirectRoute('/apps/public/', apphandlers.AppsPublicHandler, name='apps-public', strict_slash=True),
+    RedirectRoute('/apps/buildlist/', apphandlers.AppsBuildListHandler, name='apps-public', strict_slash=True),
+    RedirectRoute('/apps/<app_id>/', apphandlers.AppsDetailHandler, name='apps-detail', strict_slash=True),
+
+    # shell
+    RedirectRoute('/shell/', shellhandlers.ShellHandler, name='shell', strict_slash=True),
 ]
 
 def get_routes():

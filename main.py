@@ -21,6 +21,7 @@ import os,sys
 # install third party libraries
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib/externals'))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'web/models'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib'))
 
 import webapp2
 import config

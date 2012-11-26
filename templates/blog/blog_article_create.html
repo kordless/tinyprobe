@@ -10,9 +10,9 @@
 {% endblock %}`
 
 {% block header_title_lead %}
-    <h1><a href="/blog/{{ username }}">{{ username }}</a> / <a href="{{ uri_for("blog-article-list", username=username) }}">articles</a> / new</h1>
+    <h1><a href="/blog/">blog</a> / <a href="{{ uri_for("blog-article-list") }}">articles</a> / new</h1>
     <p class="lead">
-        Enter a title and summary for your article.  A new draft article will be stored as a <a href="http://gist.github.com/">gist</a> in your Github account where you can edit it for publication as a blog article or a guide.  You'll be able to preview and publish the article from <a href="{{ uri_for("blog-article-list", username=username) }}">your list of articles</a>.
+        Enter a title and summary for the new article.  A draft article will be stored as a <a href="http://gist.github.com/">gist</a> in your Github account where you can edit it for publication on the site.  You'll be able to preview and publish the article from <a href="{{ uri_for("blog-article-list") }}">your list of articles</a>.
     </p>
 {% endblock %}
 

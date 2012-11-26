@@ -6,6 +6,7 @@ import re
 # related third party imports
 import webapp2
 from google.appengine.api.users import NotAllowedError
+from google.appengine.api import users
 from webapp2_extras import jinja2
 from webapp2_extras import auth
 from webapp2_extras import sessions
@@ -72,6 +73,7 @@ def handle_error(request, response, exception):
     c = {
         'exception': str(exception),
         'url': request.url,
+        'base_layout': config.base_layout
         }
     status_int = hasattr(exception, 'status_int') and exception.status_int or 500
     template = config.error_templates[status_int]
@@ -314,7 +316,8 @@ class BaseHandler(webapp2.RequestHandler):
             'provider_uris': self.provider_uris,
             'provider_info': self.provider_info,
             'enable_federated_login': config.enable_federated_login,
-            'base_layout': self.get_base_layout
+            'base_layout': self.get_base_layout,
+            'is_admin': users.is_current_user_admin(),
             })
         kwargs.update(self.auth_config)
         if hasattr(self, 'form'):
