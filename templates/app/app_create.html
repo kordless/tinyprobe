@@ -1,8 +1,11 @@
 {% extends base_layout %}
 
-{% block header_title %}
-        {% trans %}Apps{% endtrans %}
+<!-- Set Title -->
+{% block title %}
+  New App - 
 {% endblock %}
+
+{% block extra_nav %}{{ macros.nav_menu('', user_id) }}{% endblock %}
 
 {% block header_title_lead %}
     <h1><a href="{{ uri_for("apps") }}">My Apps</a> / Create a New App</h1>

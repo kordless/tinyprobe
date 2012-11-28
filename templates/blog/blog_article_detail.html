@@ -26,9 +26,6 @@
         <h2 class="postdetail"><a href="/blog/{{ entry.article_slug }}">{{ entry.article_title }}</a></h2>
         <div class="date_social">
           <div class="date"><span class="label label-inverse">{{ entry.created }}</span></div>
-          {% if user_id %}
-            {{ macros.fork_gist_widget(entry.article_owner, entry.article_id) }}
-          {% endif %}
           {{ macros.g_plus_widget("http://%s/blog/%s"%(entry.article_host, entry.article_slug)) }}
           {{ macros.tweet_widget("http://%s/blog/%s"%(entry.article_host, entry.article_slug), entry.article_summary) }}
         </div>

@@ -169,6 +169,15 @@ h4 {
 	margin-top: 13px;
 }
 
+#join {
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+#user {
+    margin-left: 10px;
+}
+
 .brand img {
 	margin-bottom: 3px !important;
 	margin-right: 4px !important;
@@ -243,7 +252,21 @@ a.brand {
 .navbar .nav > li {
     margin-top: 3px;
 }
-
+a.active, a.active:hover {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    margin-top: 5px !important;
+    margin-bottom: 2px !important;
+    -webkit-border-radius: 5px !important;
+    -moz-border-radius: 5px !important;
+    border-radius: 5px !important;
+    color: white !important;
+    background-color: #999 !important;
+    float: none;
+    padding: 10px 15px 10px;
+    text-decoration: none;
+    text-shadow: none !important;
+}
 .navbar .btn,
 .navbar .btn-group {
     margin-left: 0px;
@@ -302,6 +325,10 @@ span.required {
 
 .form-actions {
 	padding-left: 0px !important;
+}
+
+.input-xlarge {
+    width: 720px;
 }
 
 .control-group.error > label, .control-group.error .help-block, .control-group.error .help-inline {

@@ -89,7 +89,7 @@ class ContactHandler(BaseHandler):
             "exception" : self.request.get('exception')
             }
 
-        return self.render_template('contact.html', **params)
+        return self.render_template('site/contact.html', **params)
 
     def post(self):
         """ validate contact form """

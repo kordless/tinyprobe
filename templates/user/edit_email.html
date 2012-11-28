@@ -1,8 +1,11 @@
 {% extends base_layout %}
 
-{% block header_title %}
-    {% trans %}Change your email{% endtrans %}
+
+{% block title %}
+    Change Email - 
 {% endblock %}
+
+{% block extra_nav %}{{ macros.nav_menu('', user_id) }}{% endblock %}
 
 {% block header_title_lead %}
     <h1>Change Email Address</h1>

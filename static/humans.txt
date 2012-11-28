@@ -3,15 +3,15 @@
 
 
 /* TEAM */
-  <your title>: <your name>
-  Site:
-  Twitter:
-  Location:
+  Developer: Kord Campbell
+  Site: http://tinyprobe.com/
+  Twitter: @tinyprobe
+  Location: San Francisco, CA
 
 /* THANKS */
-  Names (& URL):
+  Who: All you fuckers at Loggly.
 
 /* SITE */
-  Standards:
-  Components:
-  Software:
+  Standards: Standards suck.
+  Components: AppEngine, Python, GAEB
+  Software: Rocks

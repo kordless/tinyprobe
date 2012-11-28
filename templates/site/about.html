@@ -2,18 +2,18 @@
 
 <!-- Set Title -->
 {% block title %}
-  {% trans %}About the Madness{% endtrans %}
+  - About the Madness
 {% endblock %}
 
 {% block extra_nav %}{{ macros.nav_menu('', user_id) }}{% endblock %}
 
+{% block header_title_lead %}
+    <h1>About Us</h1>
+    <p class="lead">TinyProbe is a Bay Area company focused on building an application analytics framework for developers.</p>
+{% endblock %}
+
 {% block content %}
-<h1>About Us</h1>
-<p>TinyProbe is a Bay Area run company focused on providing a highly customizable analytics tool kit for developers.</p>
-
-<p>If you are interested in big data or cloud technologies and have a hankering learning or helping others configure, setup and deploy their own cloud infrastructure, <a href="/preregister/">sign up today</a>!  We'd love you to join us.</p>
-
-<p class='lead'>You can contact us by <a href="/contact/">using our web form</a> or by transcribing bits of the following information:</p>
+<p>You can contact us by <a href="/contact/">using our web form</a> or by transcribing bits of the following information:</p>
 <div id="address">
   <h4>TinyProbe Inc.</h4>
   <p>1092 Sanders Drive&nbsp;<br>

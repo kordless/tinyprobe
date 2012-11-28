@@ -1,8 +1,11 @@
 {% extends base_layout %}
 
-{% block header_title %}
-        {% trans %}Edit Profile{% endtrans %}
+<!-- Set Title -->
+{% block title %}
+  Edit Profile - 
 {% endblock %}
+
+{% block extra_nav %}{{ macros.nav_menu('', user_id) }}{% endblock %}
 
 {% block header_title_lead %}
     <h1>Edit User Profile</h1>

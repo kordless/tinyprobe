@@ -13,18 +13,7 @@
 
 
 {% block extra_nav %}
-    <li>
-    	<a class="" href="/">Home</a>
-    </li>
-	<li>
-		<a class="active" href="/forums">Forums</a>
-	</li>
-	<li>
-		<a class="" href="/tour">Take a Tour</a>
-	</li>
-	<li>
-		<a class="" href="{{ uri_for("pricing")}}">Pricing & Signup</a>
-	</li>
+    {{ macros.nav_menu('forums', user_id) }}
 {% endblock %}
 
 {% block content %}

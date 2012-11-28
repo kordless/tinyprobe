@@ -1,5 +1,12 @@
 {% extends base_layout %}
 
+<!-- Set Title -->
+{% block title %}
+  Login - 
+{% endblock %}
+
+{% block extra_nav %}{{ macros.nav_menu('', user_id) }}{% endblock %}
+
 {% block header_title_lead %}
     <h1>Login to TinyProbe</h1>
     <p class="lead">

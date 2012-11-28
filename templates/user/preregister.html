@@ -1,8 +1,11 @@
 {% extends base_layout %}
 
-{% block header_title %}
-        {% trans %}Sign Up{% endtrans %}
+<!-- Set Title -->
+{% block title %}
+  Signup Link - 
 {% endblock %}
+
+{% block extra_nav %}{{ macros.nav_menu('join', user_id) }}{% endblock %}
 
 {% block header_title_lead %}
     <h1>Step #1: Signup Link</h1>

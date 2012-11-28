@@ -446,6 +446,7 @@ class BlogUserMenuHandler(BaseHandler):
 # JOB SCHEDULER
 # schedule a job request for rebuilding user's articles from their github gists
 class BlogRefreshHandler(BaseHandler):
+    # this function is called below, in the GET method for this handler
     def task(self, user=None, channel_token=None):
         # use both token and user to schedule job for updating user's articles from github gists
         params = {'channel_token': channel_token, 'user': user, 'job_token': config.job_token}
@@ -458,6 +459,7 @@ class BlogRefreshHandler(BaseHandler):
         # refresh_token gets passed in URL and we use the current logged in user to start a job
         channel_token = self.request.get('channel_token')
         user = self.user_id
+        logging.info(user)
         db.run_in_transaction(self.task, user, channel_token)
         return
 

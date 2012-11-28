@@ -59,6 +59,7 @@ _routes = [
     RedirectRoute('/blog/actions/<article_id>/', bloghandlers.BlogArticleActionsHandler, name='blog-article-actions', strict_slash=True),
 
     # apps
+    RedirectRoute('/apps/init/', apphandlers.AppsInitializeHandler, name='apps-init', strict_slash=True),
     RedirectRoute('/apps/new/', apphandlers.AppsCreateHandler, name='apps-new', strict_slash=True),
     RedirectRoute('/apps/', apphandlers.AppsListHandler, name='apps', strict_slash=True),
     RedirectRoute('/apps/refresh/', apphandlers.AppsRefreshHandler, name='apps-refresh', strict_slash=True),

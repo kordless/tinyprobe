@@ -1,1 +1,28 @@
-tour.html
+{% extends base_layout %}
+
+{% block header_title %}
+        {% trans %}Sign Up{% endtrans %}
+{% endblock %}
+
+{% block header_title_lead %}
+    <h1>Tour</h1>
+    <p class="lead">
+      This will eventually be the tour page.  Right now, it's not.
+    </p>
+{% endblock %}
+
+{% block extra_nav %}
+    {{ macros.nav_menu('tour', user_id) }}
+{% endblock %}
+
+{% block content %}
+Content will go here.
+{% endblock %}
+
+{% block mediaJS %}
+<script type="text/javascript">
+    $().ready(function() {
+
+    });
+</script>
+{% endblock %}

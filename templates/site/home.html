@@ -1,111 +1,107 @@
 {% extends base_layout %}
 
-{% block header_title_lead %}{% endblock %}
-
+{% block title %}
+  {% trans %}TinyProbe - Big Time Application Intelligence{% endtrans %}
+{% endblock %}
 
 {% block extra_nav %}
   {{ macros.nav_menu('', user_id) }}
 {% endblock %}
 
-      {% block hero %}
-      <div class='hero'>
-        <div class='container'>
-          <h2>It's Big Time application intelligence.</h2>
-          <div class='big-media'>
-            <img alt='Pretty screenshots.  Mmmmm.' height='340' src='/img/tinyprobe_hero.png' width='940' />
-          </div>
-        </div>
+{% block hero %}
+  <div class='hero'>
+    <div class='container'>
+      <h2>It's Big Time application intelligence.</h2>
+      <div class='big-media'>
+        <img alt='Pretty screenshots.  Mmmmm.' height='340' src='/img/tinyprobe_hero.png' width='940' />
       </div>
-      {% endblock %}
+    </div>
+  </div>
+{% endblock %}
 
-      {% block header %}{% endblock %}
+{% block header %}{% endblock %}
 
-      {% block content %}
-      <div class='container content'>
-        <div class='row'>
-          <div class='span1'>
-          </div>
-          <div class='span7'>
-            <h1 class='lead blurb'>
-              Register to get access to the TinyProbe Beta.
-            </h1>
-          </div>
-          <div class='span3'>
-            <p class='ac'>
-              <a class='btn huge btn-inverse' href='/preregister' style='width:80%' title='Apply for the Beta!'>
-                <strong>Register Now</strong>
-              </a>
-            </p>
-            <h3 class='ac' style='line-height: 1;'>
-            </h3>
-          </div>
-        </div>
-        <hr />
+{% block content %}
+  <div class='container content'>
+    <div class='row'>
+      <div class='span1'>
       </div>
-      <div class="marketing">
-        <div class="row">
-          <div class="span4">
-            <img class="bs-icon" src="/img/glyphicons_362_google.png">
-            <h2>Powered by Google</h2>
-            <p>TinyProbe is built using Google's Cloud services, including <a href="https://developers.google.com/appengine/">App Engine</a>, <a href="https://developers.google.com/bigquery/">Big Query</a> and <a href="https://developers.google.com/storage/">Cloud Storage</a>.  We scale like nobody's business and our uptime can't be beat.</p>
-          </div>
-          <div class="span4">
-            <img class="bs-icon" src="/img/glyphicons_055_stopwatch.png">
-            <h2>Installs in Minutes</h2>
-            <p>Enable JavaScript, Python, NodeJS and Ruby application logging in just a few minutes.  Instrument your entire application in an afternoon!</p>
-          </div>
-          <div class="span4">
-            <img class="bs-icon" src="/img/glyphicons_037_credit.png">
-            <h2>Big Time Storage</h2>
-            <p>This ain't your momma's datastore.  Send in up to 50GB/day and store up to a total of 2TB of data.  Report, graph, and alert on millions of events with a few keystrokes.</p>
-          </div>
-        </div><!--/row-->
-        <div class="row">
-          <div class="span4">
-            <img class="bs-icon" src="/img/glyphicons_025_binoculars.png">
-            <h2>Application Intelligence</h2>
-            <p>Search, report and graph millions of events in a few seconds.  Troubleshoot your application before lunch and have the funnel analysis done before tea time.</p>
-          </div>
-          <div class="span4">
-            <img class="bs-icon" src="/img/glyphicons_331_dashboard.png">
-            <h2>Amazing Visualizations</h2>
-            <p>Show off your application data in real-time using stunning visualizations.  Assemble custom dashboards which will blow the socks off your manager's cat.</p>
-          </div>
-          <div class="span4">
-            <img class="bs-icon" src="/img/glyphicons_196_circle_exclamation_mark.png">
-            <h2>Monitoring & Alerting</h2>
-            <p>Set up complex monitoring and alerting.  Notify on errors, application failure, user events and more.  Integrates in seconds with <a href="http://pagerduty.com/">PagerDuty</a> or <a href="http://pusher.com/">Pusher</a>.</p>
-          </div>
-        </div><!--/row-->
-        <div class="row">
-          <div class="span4">
-            <img class="bs-icon" src="/img/glyphicons_381_github.png">
-            <h2>Custom Applications</h2>
-            <p>Obsessed with big time data?  Build your own custom applications in JavaScript, then store them on <a href="http://github.com/">Github</a> & share them with other TinyProbe users.</p>
-          </div>
-          <div class="span4">
-            <img class="bs-icon" src="/img/glyphicons_023_cogwheels.png">
-            <h2>Powerful APIs</h2>
-            <p>Use our RESTful APIs to send in custom application data and build stand alone reporting and alerting applications.</p>
-          </div>
-          <div class="span4">
-            <img class="bs-icon" src="/img/glyphicons_012_heart.png">
-            <h2>Built with Love</h2>
-            <p>We're passionate about our customers and their data.  If there's a feature you've got a hankering for, let us know!</p>
-          </div>
-        </div><!--/row-->
-        <hr class="soften">
+      <div class='span7'>
+        <h1 class='lead blurb'>
+          Register to get access to the TinyProbe Beta.
+        </h1>
       </div>
-        <blockquote class='big-quote'>
-          <h2>
-            "I built TinyProbe for the real heros of the startup world.  Developers."
-          </h2>
-          <small>
-            Kord Campbell, Founder
-          </small>
-        </blockquote>
+      <div class='span3'>
+        <a class='btn huge btn-inverse' href='/preregister' style='width:80%' title='Apply for the Beta!'>
+          <strong>Register Now</strong>
+        </a>
       </div>
-
+    </div>
+    <hr />
+  </div>
+  <div class="marketing">
+    <div class="row">
+      <div class="span4">
+        <img class="bs-icon" src="/img/glyphicons_362_google.png">
+        <h2>Powered by Google</h2>
+        <p>TinyProbe is built using Google's Cloud services, including <a href="https://developers.google.com/appengine/">App Engine</a>, <a href="https://developers.google.com/bigquery/">Big Query</a> and <a href="https://developers.google.com/storage/">Cloud Storage</a>.  We scale like nobody's business and our uptime can't be beat.</p>
+      </div>
+      <div class="span4">
+        <img class="bs-icon" src="/img/glyphicons_055_stopwatch.png">
+        <h2>Installs in Minutes</h2>
+        <p>Enable JavaScript, Python, NodeJS and Ruby application logging in just a few minutes.  Instrument your entire application in an afternoon!</p>
+      </div>
+      <div class="span4">
+        <img class="bs-icon" src="/img/glyphicons_037_credit.png">
+        <h2>Big Time Storage</h2>
+        <p>This ain't your momma's datastore.  Send in up to 50GB/day and store up to a total of 2TB of data.  Report, graph, and alert on millions of events with a few keystrokes.</p>
+      </div>
+    </div><!--/row-->
+    <div class="row">
+      <div class="span4">
+        <img class="bs-icon" src="/img/glyphicons_025_binoculars.png">
+        <h2>Application Intelligence</h2>
+        <p>Search, report and graph millions of events in a few seconds.  Troubleshoot your application before lunch and have the funnel analysis done before tea time.</p>
+      </div>
+      <div class="span4">
+        <img class="bs-icon" src="/img/glyphicons_331_dashboard.png">
+        <h2>Amazing Visualizations</h2>
+        <p>Show off your application data in real-time using stunning visualizations.  Assemble custom dashboards which will blow the socks off your manager's cat.</p>
+      </div>
+      <div class="span4">
+        <img class="bs-icon" src="/img/glyphicons_196_circle_exclamation_mark.png">
+        <h2>Monitoring & Alerting</h2>
+        <p>Set up complex monitoring and alerting.  Notify on errors, application failure, user events and more.  Integrates in seconds with <a href="http://pagerduty.com/">PagerDuty</a> or <a href="http://pusher.com/">Pusher</a>.</p>
+      </div>
+    </div><!--/row-->
+    <div class="row">
+      <div class="span4">
+        <img class="bs-icon" src="/img/glyphicons_381_github.png">
+        <h2>Custom Applications</h2>
+        <p>Obsessed with big time data?  Build your own custom applications in JavaScript, then store them on <a href="http://github.com/">Github</a> & share them with other TinyProbe users.</p>
+      </div>
+      <div class="span4">
+        <img class="bs-icon" src="/img/glyphicons_023_cogwheels.png">
+        <h2>Powerful APIs</h2>
+        <p>Use our RESTful APIs to send in custom application data and build stand alone reporting and alerting applications.</p>
+      </div>
+      <div class="span4">
+        <img class="bs-icon" src="/img/glyphicons_012_heart.png">
+        <h2>Built with Love</h2>
+        <p>We're passionate about our customers and their data.  If there's a feature you've got a hankering for, let us know!</p>
+      </div>
+    </div><!--/row-->
+    <hr class="soften">
+  </div>
+    <blockquote class='big-quote'>
+      <h2>
+        "I built TinyProbe for the real heros of the startup world.  Developers."
+      </h2>
+      <small>
+        Kord Campbell, Founder
+      </small>
+    </blockquote>
+  </div>
 {% endblock %}
 
 {% block mediaJS %}

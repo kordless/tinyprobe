@@ -1,18 +1,19 @@
 {% extends base_layout %}
 
-{% block header_title %}
-        {% trans %}Sign Up{% endtrans %}
+<!-- Set Title -->
+{% block title %}
+  - Pricing
 {% endblock %}
 
+{% block extra_nav %}{{ macros.nav_menu('pricing', user_id) }}{% endblock %}
+
 {% block header_title_lead %}
-    <h1><a href="{{ uri_for("company") }}">Company</a> / Pricing</h1>
+    <h1>Pricing</h1>
     <p class="lead">
-        TinyProbe uses <a href="https://developers.google.com/bigquery/docs/pricing">Google Big Query</a> for storage and queries.  Prices below are not inclusive of your Google Big Query charges.  See our <a href="/company/faq/">FAQ</a> for more information on estimating monthly Big Query charges.
+        TinyProbe uses <a href="https://developers.google.com/bigquery/docs/pricing">Google Big Query</a> for its storage and query engine.  Prices below are not inclusive of your Google Big Query charges.  See our <a href="/faq/">FAQ</a> for more information on estimating monthly Big Query charges.
     </p>
     <p class="lead">NOTICE: We are not advertising or soliciting business at this time.  Check back periodically on our Twitter account for launch announcments!</p>
     <p>
-    <a href="https://twitter.com/tinyprobe" class="twitter-follow-button" data-show-count="false" data-lang="en" data-size="large">Follow @tinyprobe</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
   </p>
 {% endblock %}
 
@@ -26,7 +27,7 @@
                   <img src="http://placehold.it/300x200" alt="">
                   <div class="caption">
                     <h3>Geek - $20/month</h3>
-                    <p>30 day free trial.  </p>
+                    <p>30 day free trial.</p>
                     <p><a href="/preregister" class="btn">Register</a></p>
                   </div>
                 </div>
@@ -36,7 +37,7 @@
                   <img src="http://placehold.it/300x200" alt="">
                   <div class="caption">
                     <h3>Hacker - $40/month</h3>
-                    <p>30 day free trial.  </p>
+                    <p>30 day free trial.</p>
                     <p><a href="/preregister" class="btn">Register</a></p>
                   </div>
                 </div>

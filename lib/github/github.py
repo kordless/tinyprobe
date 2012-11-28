@@ -22,7 +22,9 @@ import lib.github.oauth_client as oauth2
 from google.appengine.api import memcache
 import logging
 
-# Github OAuth Implementation
+##############
+# oauth crap #
+##############
 class GithubAuth(object):
     
     def __init__(self, scope, next_page=''):
@@ -65,24 +67,52 @@ class GithubAuth(object):
 
         return access_token
 
+################
+# user methods #
+################
+def get_user_info(access_token):
+    params = {'access_token': access_token}
+    base_uri = 'https://api.github.com/user'
+    uri = '%s?%s' % (base_uri, urllib.urlencode(params))
 
-    def get_user_info(self, access_token):
-
-        oauth_client = oauth2.Client2(
-            self.oauth_settings['client_id'],
-            self.oauth_settings['client_secret'],
-            self.oauth_settings['access_token_url']
-        )
-
-        (headers, body) = oauth_client.request(
-            'https://api.github.com/user',
-            access_token=access_token,
-            token_param='access_token'
-        )
-        
-        return simplejson.loads(body)
+    try:
+        http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
+        headers, content = http.request(uri, method='GET', body=None, headers=None)
+    
+        return simplejson.loads(content)
+    except:
+        return simplejson.loads("{'message': 'user_info call to Github failed'}")
 
 
+################
+# repo methods #
+################
+def get_user_repo_contents(access_token, github_user, github_repo, github_path=''):
+    params = {}
+
+
+def fork_new_user_repo(github_repo_owner, github_repo, access_token):
+    params = {'access_token': access_token}
+    base_uri = 'https://api.github.com/repos/%s/%s/forks' % (github_repo_owner, github_repo)
+    uri = '%s?%s' % (base_uri, urllib.urlencode(params))
+    logging.info("value is: %s" % uri)
+    try:
+        # fork repo using Github gist API
+        http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
+        headers, content = http.request(uri, method='POST', body=None, headers=None)
+        response = simplejson.loads(content)
+        return response
+    except:
+        return simplejson.loads("{'message': 'fork_new_user_repo call to Github failed'}")
+
+
+def delete_repo(github_user, access_token):
+    params = {}
+
+
+################
+# gist methods #
+################
 def get_user_gists(github_user, access_token):
     params = {'access_token': access_token}
     base_uri = 'https://api.github.com/users/%s/gists' % github_user
@@ -121,9 +151,8 @@ def get_user_gists(github_user, access_token):
         return apps
 
     except:
-        pass
-        # TODO do somthing if getting the gists fails
-
+        return False        
+        
 
 def get_article_gists(github_user, access_token):
     params = {'access_token': access_token}
@@ -189,6 +218,38 @@ def get_raw_gist_content(gist_id):
         if False:
             logging.info("value is: %s" % "yeah, we're here alright")
             return False
+
+
+def fork_gist(access_token, gist_id):
+    try:
+        params = {'access_token': access_token}
+        uri = 'https://api.github.com/gists/%s/fork?%s' % (gist_id, urllib.urlencode(params))
+        http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
+        headers, content = http.request(uri, method='POST', headers=None)
+        gist = simplejson.loads(content)
+
+        try:
+            # grab the raw file and parse it for yaml bits
+            if gist['files'][config.gist_manifest_name]['raw_url']:
+                headers, content = http.request(gist['files'][config.gist_manifest_name]['raw_url'])
+                manifest = yaml.load(content)
+        
+            gist_meta = {
+                'title': manifest['title'], 
+                'summary': manifest['summary'], 
+                'published': manifest['published'],
+                'article_type': manifest['type'],
+                'gist_id': gist['id'],
+            }
+
+            return gist_meta
+
+        except:
+            return False 
+
+    except:
+        logging.info("%s was not forked because %s" % (gist_id, content))
+        return False
 
 
 def flush_raw_gist_content(gist_id):

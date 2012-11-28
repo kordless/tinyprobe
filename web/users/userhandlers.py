@@ -160,7 +160,7 @@ class SocialLoginHandler(BaseHandler):
         # github stores the callback URL in the app settings on their site, so we don't pass it here
         # you can register a new app at https://github.com/settings/applications/
         elif provider_name == "github":
-            scope = 'gist'
+            scope = 'repo,gist'
             github_helper = github.GithubAuth(scope)
             self.redirect( github_helper.get_authorize_url() )
 
@@ -235,13 +235,13 @@ class CallbackSocialLoginHandler(BaseHandler):
             code = self.request.get('code')
 
             # create our github auth object (again)
-            scope = 'gist'
+            scope = 'repo,gist'
             github_helper = github.GithubAuth(scope)
 
             # retrieve the access token using the code and auth object
             try:
                 access_token = github_helper.get_access_token(code)
-                user_data = github_helper.get_user_info(access_token)
+                user_data = github.get_user_info(access_token)
             except:
                 message = _('An error was encountered while exchanging tokens with Github.')
                 self.add_message(message, 'error')

@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8">
 
-    <title>{% block title %}{{ app_name }}{% endblock %}</title>
+    <title>{% block title %}{% endblock %}{{ app_name }}</title>
     <!--[if lt IE 9]>
       <script src='//html5shim.googlecode.com/svn/trunk/html5.js'></script>
     <![endif]-->
@@ -67,12 +67,11 @@
                               <li><a href="{{ uri_for("shell") }}" target="_blank">New Shell</a></li> 
                               <li><a href="{{ uri_for("apps") }}">My Apps</a></li>
                               <li class="divider"></li>
-                              {% if is_admin %}
-                                <li class="dropdown-label">Admin...</li>
+                              {% if admin %}
                                 <li><a href="{{uri_for('blog-menu', menu_id='newarticle') }}">New Post</a></li>
                                 <li><a href="{{uri_for('blog-menu', menu_id='myarticles') }}">List Posts</a></li>
+                                <li class="divider"></li>
                               {% endif %}
-                              <li class="divider"></li>
                               <li><a href="{{ uri_for("edit-profile") }}">Edit Profile</a></li>
                               <li><a href="{{ uri_for("edit-email") }}">Change Email</a></li>
                               <li><a href="{{ uri_for("edit-password") }}">Change Password</a></li>                              
@@ -156,13 +155,13 @@
                   <a href='/shell#demo'>Demo</a>
                 </li>
                 <li>
-                  <a href='/features'>Features</a>
-                </li>
-                <li>
-                  <a href='/company/pricing'>Pricing</a>
+                  <a href='/pricing'>Pricing</a>
                 </li>
                 <li>
                   <a href='/signup'>Sign Up</a>
+                </li>
+                <li>
+                  <a href='/features'>Features</a>
                 </li>
               </ul>
             </div>
@@ -187,10 +186,13 @@
               <h4>Help</h4>
               <ul class='unstyled'>
                 <li>
-                  <a href='/support'>Support</a>
+                  <a href='/docs'>Documentation</a>
                 </li>
                 <li>
-                  <a href='/docs'>Documentation</a>
+                  <a href='/contact'>Contact Us</a>
+                </li>
+                <li>
+                  <a href='/support'>Support</a>
                 </li>
                 <li>
                   <a href='http://github.com/tinyprobe'>Code</a>
@@ -224,7 +226,7 @@
         <div class='row'>
           <div class='span10'>
             <div id='copyright'>
-              <p>&copy; 2012 TinyProbe, Inc. All Rights Reserved.</p>
+              <p>&copy; 2013 TinyProbe, Inc. All Rights Reserved.</p>
             </div>
           </div>
         </div>
@@ -242,6 +244,16 @@
   <script src="/js/script.js"></script>
 
   {% block mediaJS %}{% endblock %}
+  
+  <!-- signup shizzle -->
+  <script type="text/javascript">
+    $(window).load(function(){
+      $("#join").click(function(e){
+        window.location="{{ uri_for("preregister") }}";
+      });
+    });
+  </script>
+  
   <!-- fix yellow input boxes on webkit -->
   <script type="text/javascript">
     if (navigator.userAgent.toLowerCase().indexOf("chrome") >= 0) {

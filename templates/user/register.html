@@ -1,13 +1,16 @@
 {% extends base_layout %}
 
-{% block header_title %}
-        {% trans %}Sign Up{% endtrans %}
+<!-- Set Title -->
+{% block title %}
+  Signup - 
 {% endblock %}
 
+{% block extra_nav %}{{ macros.nav_menu('join', user_id) }}{% endblock %}
+\
 {% block header_title_lead %}
     <h1>Step #2: Pick a Username & Password</h1>
     <p class="lead">
-        Pick a username and password for your account.  Sorry, no bananas allowed.
+        Pick a username and password for your account.
     </p>
 {% endblock %}
 

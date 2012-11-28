@@ -60,6 +60,9 @@ gist_article_manifest_name = 'tinyprobe-article.manifest'
 gist_article_markdown_name = 'tinyprobe-article.md'
 memcache_expire_time = 604800
 
+# issue a job token to prevent others from running our tasks by knowing URL
+job_token = '917c1f5a7640239c43d52c56061c73a2'
+
 # html whitelist for bleached articles
 bleach_tags = ['p', 'em', 'strong', 'code', 'h1', 'h2', 'h3', 'h4', 'h5', 'td', 'li', 'ul', 'ol', 'table', 'tbody', 'thead', 'iframe', 'tr', 'th', 'span',  'pre', 'i', 'button', 'img', 'a']
 bleach_attributes = {'i': ['class'], 'a': ['href', 'rel'], 'table': ['class'], 'img': ['src', 'alt'], 'iframe': ['src', 'width', 'height', 'frameborder'], 'pre': ['class']}

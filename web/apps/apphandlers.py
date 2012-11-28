@@ -31,6 +31,19 @@ from lib.github import github
 from lib.twitter import twitter
 
 
+# setup user's repository by forking ours
+class AppsInitializeHandler(BaseHandler):
+    @user_required
+    def get(self):
+        # get current user info, then fork tinyprobe repo into their github account
+        # user call to Github wants case-sensitive usernames
+        user_info = models.User.get_by_id(long(self.user_id))
+        social_user = models.SocialUser.get_by_user_and_provider(user_info.key, 'github')
+        response = github.fork_new_user_repo('tinyprobe', 'tinyprobe-apps', social_user.access_token)
+        logging.info("value is: %s" % response)
+        return
+
+
 class AppsDetailHandler(BaseHandler):
     @user_required
     def get(self, app_id = None):
