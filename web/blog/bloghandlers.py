@@ -459,7 +459,6 @@ class BlogRefreshHandler(BaseHandler):
         # refresh_token gets passed in URL and we use the current logged in user to start a job
         channel_token = self.request.get('channel_token')
         user = self.user_id
-        logging.info(user)
         db.run_in_transaction(self.task, user, channel_token)
         return
 
