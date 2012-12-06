@@ -197,7 +197,6 @@ class BaseHandler(webapp2.RequestHandler):
     def is_admin(self):
         if self.user:
             try:
-                logging.info("here in is_admin")
                 user_info = models.User.get_by_id(long(self.user_id))
                 return user_info.admin
             except AttributeError, e:
@@ -330,7 +329,7 @@ class BaseHandler(webapp2.RequestHandler):
             'base_layout': self.get_base_layout,
             'admin': self.is_admin,
             })
-        logging.info("admin is: %s" % self.is_admin)
+
         kwargs.update(self.auth_config)
         if hasattr(self, 'form'):
             kwargs['form'] = self.form

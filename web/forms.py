@@ -29,9 +29,10 @@ class BaseForm(Form):
         return FormTranslations()
 
 class AppForm(BaseForm):
-    appname = fields.TextField(_('App_Name'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)], id='appname')
+    appname = fields.TextField(_('App_Name'), [validators.Required(), validators.Length(max=25)], id='appname')
     appdescription = fields.TextField(_('App_Description'), [validators.Required(), validators.Length(max=140)], id='appdescription')
-    appcommand = fields.TextField(_('App_Command'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH), validators.regexp(utils.ALPHANUMERIC_REGEXP, message=_('Command string is invalid. Letters and numbers only!'))], id='appcommand')
+    appcommand = fields.TextField(_('App_Command'), [validators.Required(), validators.Length(max=13), validators.regexp(utils.ALPHANUMERIC_REGEXP, message=_('Command string is invalid. Letters and numbers only!'))], id='appcommand')
+    apppublic = fields.SelectField(_('Public'), [validators.Required()], choices=[('public', 'Public'), ('private', 'Private')])
 
 class BlogArticleForm(BaseForm):
     title = fields.TextField(_('Article_Title'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)], id='title')

@@ -49,13 +49,16 @@ else:
 	github_client_id = 'd43f79b4e7c21fa43454'
 	github_client_secret = 'a64ddfdc29dcf0c7590147476014950bf160883f'
 
-# name to use to ID TinyProbe gists
+# gist settings for apps
+gist_template_id = '4185065'
+gist_html_name = 'tinyprobe.html'
 gist_manifest_name = 'tinyprobe.manifest'
 gist_javascript_name = 'tinyprobe.js'
-gist_markdown_name = 'tinyprobe.md'
-gist_preview_image = 'http://www.tinyprobe.com/img/screenshot.png'
+gist_thumbnail_name = 'tinyprobe.png'
+gist_thumbnail_default_url = '/img/gist_thumbnail.png'
+gist_markdown_name = 'README.md'
 
-# gist memcache settings for blog
+# gist settings for blog
 gist_article_manifest_name = 'tinyprobe-article.manifest'
 gist_article_markdown_name = 'tinyprobe-article.md'
 memcache_expire_time = 604800

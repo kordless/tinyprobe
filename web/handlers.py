@@ -176,6 +176,11 @@ class TourHandler(BaseHandler):
         return self.render_template('site/tour.html', **params)
 
 
+class AdminUserDBHandler(BaseHandler):
+    def get(self):
+        models.User.update_schema()
+        return
+
 
 
 

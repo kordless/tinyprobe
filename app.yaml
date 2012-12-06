@@ -1,5 +1,5 @@
 application: tinyprobe
-version: 4-1
+version: 4-3
 runtime: python27
 api_version: 1
 threadsafe: true
@@ -83,6 +83,8 @@ libraries:
   version: "2.5.1"
 - name: markupsafe
   version: "0.15"
+- name: pycrypto
+  version: "2.3"
 
 error_handlers:
   # Only errors with error_code, don't put a default error here

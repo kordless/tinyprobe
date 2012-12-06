@@ -29,6 +29,14 @@ class User(User):
     def get_by_email(cls, email):
         return cls.query(cls.email == email).get()
 
+    @classmethod
+    def update_schema(cls):
+        users = cls.query().fetch()
+        for user in users:
+            # put new schema objects in here to update all rows
+            user.admin = False
+            user.put()
+
     def get_social_providers_names(self):
         social_user_objects = SocialUser.get_by_user(self.key)
         result = []
@@ -178,15 +186,16 @@ class Article(ndb.Model):
 class App(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
-    owner = ndb.KeyProperty(kind=User)
     name = ndb.StringProperty()
-    description = ndb.StringProperty()
-    preview = ndb.StringProperty()
     command = ndb.StringProperty()
+    description = ndb.StringProperty()
+    thumb_url = ndb.StringProperty()
     gist_id = ndb.StringProperty()
+    owner = ndb.KeyProperty(kind=User)
+    author = ndb.KeyProperty(kind=User)
+    github_author = ndb.StringProperty()
     activated = ndb.BooleanProperty(default=True)
     public = ndb.BooleanProperty(default=True)
-
 
     @classmethod
     def delete_by_user(cls, user):

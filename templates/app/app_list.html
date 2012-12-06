@@ -7,138 +7,66 @@
 {% block header_title_lead %}
     <h1>My Apps</h1>
     <p class="lead">
-    	Apps are stored in <a href="http://gist.github.com/">Gists</a> on your Github account.  You can also <a href="{{ uri_for("apps-public") }}">browse existing apps</a> shared by other TinyProbe users.
+    	Apps are stored in <a href="http://gist.github.com/mine">Gists</a> on your Github account.  You can also <a href="{{ uri_for("apps-public") }}">browse existing apps</a> shared by other TinyProbe users.
     </p>
 {% endblock %}
 
 {% block content %}
-    <div id="cards" class="row bottom">
-        <div id="foo" class="card maps">
-          <div class="front">
-            <img src="/img/arbor_thumnail.png" width="225" height="140">
-            <h3 class="tool_name">GeoCommons</h3>
-            <p>A public community and set of tools to access, visualize and analyze data with compelling map visualizations.</p>
-            <p><a href="http://geocommons.com/" title="Official Website">http://geocommons.com</a></p>
-          </div>
-          <div class="back">
-            <h3>GeoCommons</h3>
-            <p>
-            <strong>Type: </strong>Web Application &amp; API<br/>
-            <strong>Technology: </strong>JavaScript, Ruby<br/>
-            <strong>License: </strong><a href="http://geocommons.com/help/Open_Source">Various</a><br/>
-          </p>
-            <h4>Links</h4>
-            <ul>
-              <li><a href="http://geocommons.com/" title="Official Website">Website</a></li>
-              <li><a href="http://geocommons.com/api/" title="API Documentation">API Documentation</a></li>
-              <li><a href="http://github.com/geocommons/" title="GitHub User">GitHub User</a></li>
-            </ul>
-          </div>
-        </div>
-        <div id="bar" class="card maps charts data">
-          <div class="front">
-            <img src="/img/degrafa_thumbnail.png" width="225" height="140">
-            <h3 class="tool_name">Google Fusion Tables</h3>
-            <p>A web application that makes it easy to host, manage, collaborate on, visualize, and publish data tables.</p>
-            <p><a href="http://www.google.com/fusiontables" title="Official Website">http://www.google.com/fusiontables</a></p>
-          </div>
-          <div class="back">
-            <h3>Google Fusion Tables</h3>
-            <p>
-            <strong>Type: </strong>Web Application &amp; API<br/>
-            <strong>Technology: </strong>JavaScript, Flash<br/>
-            <strong>License: </strong>Free to use<br/
-          </p>
-            <h4>Links</h4>
-            <ul>
-              <li><a href="http://www.google.com/fusiontables/" title="Official Website">Website</a></li>
-              <li><a href="https://sites.google.com/site/fusiontablestalks/stories/" title="Example Gallery">Example Gallery</a></li>
-              <li><a href="https://developers.google.com/fusiontables/" title="API Documentation">API Documentation</a></li>
-            </ul>
-          </div>
-        </div>
-        <div id="foo" class="card maps">
-          <div class="front">
-            <img src="/img/arbor_thumnail.png" width="225" height="140">
-            <h3 class="tool_name">GeoCommons</h3>
-            <p>A public community and set of tools to access, visualize and analyze data with compelling map visualizations.</p>
-            <p><a href="http://geocommons.com/" title="Official Website">http://geocommons.com</a></p>
-          </div>
-          <div class="back">
-            <h3>GeoCommons</h3>
-            <p>
-            <strong>Type: </strong>Web Application &amp; API<br/>
-            <strong>Technology: </strong>JavaScript, Ruby<br/>
-            <strong>License: </strong><a href="http://geocommons.com/help/Open_Source">Various</a><br/>
-          </p>
-            <h4>Links</h4>
-            <ul>
-              <li><a href="http://geocommons.com/" title="Official Website">Website</a></li>
-              <li><a href="http://geocommons.com/api/" title="API Documentation">API Documentation</a></li>
-              <li><a href="http://github.com/geocommons/" title="GitHub User">GitHub User</a></li>
-            </ul>
-          </div>
-        </div>
-        <div id="bar" class="card maps charts data">
-          <div class="front">
-            <img src="/img/degrafa_thumbnail.png" width="225" height="140">
-            <h3 class="tool_name">Google Fusion Tables</h3>
-            <p>A web application that makes it easy to host, manage, collaborate on, visualize, and publish data tables.</p>
-            <p><a href="http://www.google.com/fusiontables" title="Official Website">http://www.google.com/fusiontables</a></p>
-          </div>
-          <div class="back">
-            <h3>Google Fusion Tables</h3>
-            <p>
-            <strong>Type: </strong>Web Application &amp; API<br/>
-            <strong>Technology: </strong>JavaScript, Flash<br/>
-            <strong>License: </strong>Free to use<br/
-          </p>
-            <h4>Links</h4>
-            <ul>
-              <li><a href="http://www.google.com/fusiontables/" title="Official Website">Website</a></li>
-              <li><a href="https://sites.google.com/site/fusiontablestalks/stories/" title="Example Gallery">Example Gallery</a></li>
-              <li><a href="https://developers.google.com/fusiontables/" title="API Documentation">API Documentation</a></li>
-            </ul>
-          </div>
-        </div>
+  <!-- hidden delete modal -->
+    <div id="delete" class="modal hide fade">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3>Confirm Deletion</h3>
     </div>
-
-	<table class="table table-striped table-hover">
-	  <thead>
-	    <tr>
-	      <th></th>
-	      <th>Name</th>
-	      <th>Description</th>
-	      <th>Actions</th>
-	    </tr>
-	  </thead>
-	  <tbody>
-	  	{% for item in apps %}
-	  		<tr>
-                <td><img class="app-icon" src="{{item.icon}}"/></td>
-	  			<td>{{item.name}}</td>
-	  			<td>{{item.description}}</td>
-	  			<td>
-	  				<a class="btn btn-small" title="edit" href="{{item.id}}"><i class="icon-edit"></i></a>
-	  				<a class="btn btn-small" title="share" href="#"><i class="icon-share"></i></a>
-	  				<a class="btn btn-small" title="favorite" href="#"><i class="icon-star"></i></a>
-	  			</td>
-	  		</tr>
-	    {% endfor %}
-	  </tbody>
-	</table>
+    <div class="modal-body">
+      <p>Deleting this app will remove it from your acccount and delete its gist from your Github account.  You cool with that?</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#" id="cancel-button" class="btn btn-inverse" data-dismiss="modal">Cancel</a>
+      <a href="#" id="delete-button" class="btn btn-primary">Delete App</a>
+    </div>
+    </div>
+    <div id="cards">
+      {% for item in apps %}
+        <div id="app-{{ item.key.id() }}" class="card">
+          <div class="front">
+            <img src="{{ item.thumb_url }}">
+            <h3 class="app_name">{{ item.name }}{% if not item.public %}<i class="icon-lock"></i>{% endif %}</h3>
+            <p class="app_desc">{{ item.description }}</p>
+          </div>
+          <div class="back">
+            <div class="iconrow">
+                <a rel="tooltip" id="setup-{{item.key.id()}}" class="btn btn-small" title="Setup" href="#"><i class="icon-tasks"></i></a>
+                <a rel="tooltip" id="edit-{{item.gist_id}}" class="btn btn-small" title="Edit" href="#"><i class="icon-pencil"></i></a>
+                <a rel="tooltip" id="refresh-{{item.key.id()}}" class="btn btn-small" title="Clear Memcache Copy" href="#"><i class="icon-refresh"></i></a>
+                <button id="remove-{{item.key.id()}}" class="btn btn-small" title="Remove" href="#"><i class="icon-remove"></i></button>
+            </div>
+            <div class="textrow">
+                <h3 class="app_name">{{ item.name }}{% if not item.public %}<i class="icon-lock icon-white"></i>{% endif %}</h3>
+                <p class="app_author">by <a href="http://github.com/{{ item.github_author }}">@{{ item.github_author }}</a></p>
+                <p class="app_desc">{{ item.description }}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
     <div class="form-actions">
         <a href="{{ uri_for("apps-new") }}" class="btn btn-inverse btn-large">{% trans %}New{% endtrans %}</a>
-        <a title="Sync apps with user's gists." id="refresh_button" class="btn btn-inverse btn-large">{% trans %}Sync{% endtrans %}</a>
+        <a title="Sync apps with user's gists." id="refresh_button" class="btn btn-inverse btn-large" data-loading-text="Syncing...">{% trans %}Sync{% endtrans %}</a>
     </div>
 {% endblock %}
 
 {% block mediaJS %}
 <script type="text/javascript" src="/_ah/channel/jsapi"></script>
 <script type="text/javascript" src="/js/libs/jquery.isotope.min.js"></script>
-<script type="text/javascript" src="/js/libs/jquery.flippy.js"></script>
+<script type="text/javascript" src="/js/libs/bootstrap-tooltip.js"></script>
 <script type="text/javascript">
     $().ready(function() {
+        var channel_token = "{{ channel_token }}";
+        var refresh_channel = "{{ refresh_channel }}";
+        var csrf_token = "{{ csrf_token() }}";
+
+        $('.btn').tooltip();
         // watch for refresh_button to be clicked
         $("#refresh_button").click(function() {
             $.ajax({
@@ -151,12 +79,67 @@
         });
 
         // listen to our refresh channel for page reload
-        onMessage = function() {
-            window.location.reload();
+        onMessage = function(data) {
+            if (data['data'] == 'reload') {
+              window.location.reload();
+            } else {
+              alert("There was an error refreshing your apps.  Sorry!");
+            }
         };
         channel = new goog.appengine.Channel('{{ refresh_channel }}');
         socket = channel.open();
         socket.onmessage = onMessage;
+
+        // edit on github buttons
+        $('a[id^="edit-"]').each(function(index){
+          $('#'+this.id).click(function() {
+            gist_id = this.id.split("-").pop();
+            window.location = 'https://gist.github.com/'+gist_id;
+            return false;
+          })
+        });
+
+        $('a[id^="setup-"]').each(function(index){
+          $('#'+this.id).click(function() {
+            gist_id = this.id.split("-").pop();
+            window.location = '/apps/'+gist_id;
+            return false;
+          })
+        });
+
+        // remove buttons
+        $('button[id^="remove-"]').each(function(index){
+          $('#'+this.id).click(function() {
+            app_id = this.id.split("-").pop();
+            button_id = '#'+this.id;
+            console.log("click delete");
+            $('#delete').modal();
+            $('#delete-button').click(function() {
+              $.ajax({
+                url: '/apps/'+app_id+'/?channel_token='+channel_token+'&_csrf_token='+csrf_token,
+                type: 'DELETE',
+                success:(function() {
+                  $(button_id).unbind("click");
+                  $(button_id).addClass("disabled");
+                })
+              });
+            });
+          })
+        });
+        
+        // refresh memcache of app buttons
+        $('a[id^="refresh-"]').each(function(index){
+          $('#'+this.id).click(function() {
+            console.log('yup');
+            app_id = this.id.split("-").pop();
+            button_id = '#'+this.id;
+            $.ajax({
+              url: '/apps/'+app_id+'/refresh/?&_csrf_token='+csrf_token,
+              type: 'GET',
+            });
+            console.log(this.id+" clicked");
+          })
+        });
 
         // isotope & card flip
         var $container = $('#cards');
@@ -170,7 +153,7 @@
                 }
             },
             sortBy : 'name',
-            cellsByRow : { columnWidth : 340 }
+            cellsByRow : { columnWidth : 280 }
         });
         $('.card .front').append('<span class="flip_back"></span>');
         $('.card .back').append('<span class="flip_front"></span>');

@@ -18,7 +18,7 @@ __website__ = 'http://www.tinyprobe.com'
 
 import config
 import urllib, httplib2, simplejson, yaml
-import lib.github.oauth_client as oauth2
+import lib.github.oauth_client as oauth22
 from google.appengine.api import memcache
 import logging
 
@@ -41,7 +41,7 @@ class GithubAuth(object):
 
     # get our auth url and return to login handler
     def get_authorize_url(self):
-        oauth_client = oauth2.Client2( 
+        oauth_client = oauth22.Client2( 
             self.oauth_settings['client_id'], 
             self.oauth_settings['client_secret'], 
             self.oauth_settings['authorization_url'] 
@@ -55,7 +55,7 @@ class GithubAuth(object):
         return authorization_url
 
     def get_access_token(self, code):
-        oauth_client = oauth2.Client2(
+        oauth_client = oauth22.Client2(
             self.oauth_settings['client_id'],
             self.oauth_settings['client_secret'],
             self.oauth_settings['access_token_url']
@@ -85,34 +85,10 @@ def get_user_info(access_token):
 
 
 ################
-# repo methods #
-################
-def get_user_repo_contents(access_token, github_user, github_repo, github_path=''):
-    params = {}
-
-
-def fork_new_user_repo(github_repo_owner, github_repo, access_token):
-    params = {'access_token': access_token}
-    base_uri = 'https://api.github.com/repos/%s/%s/forks' % (github_repo_owner, github_repo)
-    uri = '%s?%s' % (base_uri, urllib.urlencode(params))
-    logging.info("value is: %s" % uri)
-    try:
-        # fork repo using Github gist API
-        http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
-        headers, content = http.request(uri, method='POST', body=None, headers=None)
-        response = simplejson.loads(content)
-        return response
-    except:
-        return simplejson.loads("{'message': 'fork_new_user_repo call to Github failed'}")
-
-
-def delete_repo(github_user, access_token):
-    params = {}
-
-
-################
 # gist methods #
 ################
+
+# used by build list job
 def get_user_gists(github_user, access_token):
     params = {'access_token': access_token}
     base_uri = 'https://api.github.com/users/%s/gists' % github_user
@@ -132,16 +108,23 @@ def get_user_gists(github_user, access_token):
                 if gist['files'][config.gist_manifest_name]['raw_url']:
                     headers, content = http.request(gist['files'][config.gist_manifest_name]['raw_url'])
                     manifest = yaml.load(content)
-                    logging.info("value is: %s" % manifest)
-                logging.info("value is: %s" % gist)
+
+                # assign the thumbnail
+                if gist['public']:
+                    thumb_url = gist['files'][config.gist_thumbnail_name]['raw_url']
+                else:
+                    thumb_url = config.gist_thumbnail_default_url
+                
                 # stuff it onto apps list
                 apps.append({
                     'name': manifest['name'],
                     'command': manifest['command'],
-                    'preview': manifest['preview'],
+                    'github_author': manifest['author'],
                     'gist_id': gist['id'],
                     'description': manifest['description'],
+                    'thumb_url': thumb_url,
                     'url': gist['html_url'],
+                    'public': gist['public'],
                 })
             
             except:
@@ -154,6 +137,7 @@ def get_user_gists(github_user, access_token):
         return False        
         
 
+# for the blog
 def get_article_gists(github_user, access_token):
     params = {'access_token': access_token}
     base_uri = 'https://api.github.com/users/%s/gists' % github_user
@@ -205,7 +189,7 @@ def get_raw_gist_content(gist_id):
         gist = simplejson.loads(content)
 
         # if we find files, great!
-        if True:
+        try:
             gist_markdown_url = gist['files'][config.gist_article_markdown_name]['raw_url']
             # use that raw url to load the content and stuff it into memcache for an hour
             http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
@@ -215,41 +199,9 @@ def get_raw_gist_content(gist_id):
                 logging.info("memcache add of content from gist %s failed." % gist_id)
 
             return markdown
-        if False:
+        except:
             logging.info("value is: %s" % "yeah, we're here alright")
             return False
-
-
-def fork_gist(access_token, gist_id):
-    try:
-        params = {'access_token': access_token}
-        uri = 'https://api.github.com/gists/%s/fork?%s' % (gist_id, urllib.urlencode(params))
-        http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
-        headers, content = http.request(uri, method='POST', headers=None)
-        gist = simplejson.loads(content)
-
-        try:
-            # grab the raw file and parse it for yaml bits
-            if gist['files'][config.gist_manifest_name]['raw_url']:
-                headers, content = http.request(gist['files'][config.gist_manifest_name]['raw_url'])
-                manifest = yaml.load(content)
-        
-            gist_meta = {
-                'title': manifest['title'], 
-                'summary': manifest['summary'], 
-                'published': manifest['published'],
-                'article_type': manifest['type'],
-                'gist_id': gist['id'],
-            }
-
-            return gist_meta
-
-        except:
-            return False 
-
-    except:
-        logging.info("%s was not forked because %s" % (gist_id, content))
-        return False
 
 
 def flush_raw_gist_content(gist_id):
@@ -261,6 +213,33 @@ def flush_raw_gist_content(gist_id):
         return False
 
 
+def fork_gist(access_token, gist_id):
+    try:
+        params = {'access_token': access_token}
+        uri = 'https://api.github.com/gists/%s/fork?%s' % (gist_id, urllib.urlencode(params))
+        http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
+        headers, content = http.request(uri, method='POST', headers=None)
+        gist = simplejson.loads(content)
+        return gist
+    except:
+        logging.info("%s was not forked for some reason" % (gist_id))
+        return False
+
+
+def patch_user_gist(access_token, gist_id, body):
+    try:
+        # patch the gist - this is fucking messy business because github returns the png in the text!
+        # we don't do anything with the results other than see if we got some.  can't event log it...
+        params = {'access_token': access_token}
+        base_uri = 'https://api.github.com/gists'
+        uri = '%s/%s?%s' % (base_uri, gist_id, urllib.urlencode(params))
+        http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
+        headers, content = http.request(uri, method='POST', body=body, headers=None)
+        return True
+    except:
+        return False
+
+
 def put_user_gist(access_token, body):
     try:
         # stuff that sucker to github
@@ -269,9 +248,8 @@ def put_user_gist(access_token, body):
         uri = '%s?%s' % (base_uri, urllib.urlencode(params))
         http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
         headers, content = http.request(uri, method='POST', body=body, headers=None)
-
-        # check github said it made it ok
-        return simplejson.loads(content)
+        gist = simplejson.loads(content)
+        return gist
     except:
         return False
 

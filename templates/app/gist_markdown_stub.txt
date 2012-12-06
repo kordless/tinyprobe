@@ -1,12 +1,12 @@
 # {{ name }}
-{{ description }}
+{{ description }} by [{{ github_user }}](http://github.com/{{ github_user }})
 
 ## Usage
 {{ command }} parameter1 parameter2
 
 ## Output
 A really cool visualization!
-![Visualize]: http://www.tinyprobe.com/img/screenshot.png "Visualize"
+![Visualize](http://www.tinyprobe.com/img/screenshot.png)
 
 ## Features
 * awesome visualization

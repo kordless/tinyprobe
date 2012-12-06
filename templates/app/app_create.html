@@ -21,6 +21,7 @@
             {{ macros.input(form, "appname", _("Name"), placeholder=_("Awesome Signup Graph"), class="input-xlarge focused required") }}
             {{ macros.input(form, "appdescription", _("Description"), placeholder=_("Graphs signup events for Buy Local's website over the last week."), class="input-xlong focused required") }}
             {{ macros.input(form, "appcommand", _("Command Line Name"), placeholder=_("awesome"), class="input-xlarge focused required") }}
+            {{ macros.input(form, "apppublic", _("Permissions")) }}
             <div class="form-actions">
                 <button type="submit" class="btn btn-inverse btn-large">{% trans %}Create{% endtrans %}</button>
             </div>

@@ -110,7 +110,7 @@
             $('#delete').modal();
             $('#delete-button').click(function() {
               $.ajax({
-                url: '/blog/actions/'+article_id+'/?channel_token='+channel_token+'&_csrf_token='+csrf_token,
+                url: '/blog/'+article_id+'/actions/?channel_token='+channel_token+'&_csrf_token='+csrf_token,
                 type: 'DELETE',
                 success:(function() {
                   $(button_id).unbind("click");
@@ -127,7 +127,7 @@
             article_id = this.id.split("-").pop();
             button_id = '#'+this.id;
             $.ajax({
-              url: '/blog/actions/'+article_id+'/refresh/?&_csrf_token='+csrf_token,
+              url: '/blog/'+article_id+'/refresh/?&_csrf_token='+csrf_token,
               type: 'GET',
             });
             console.log(this.id+" clicked");
@@ -148,7 +148,7 @@
             draft = !$('#'+this.id).children('.active').length;
             article_id = this.id.split("-").pop();
             $.ajax({
-              url: '/blog/actions/'+article_id+'/',
+              url: '/blog/'+article_id+'/actions/',
               type: 'PUT',
               data: {_csrf_token: csrf_token, draft: draft},
             });

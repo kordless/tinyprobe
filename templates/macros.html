@@ -117,7 +117,7 @@
     <script type="text/javascript">
         $(window).load(function(){
             $('#fork-{{ article_id }}').click(function() {
-                var url = '/blog/{{ article_owner }}/{{ article_id }}/';
+                var url = '/blog/{{ article_id }}/';
                 console.log(url);
                 $.ajax({
                     url: url,

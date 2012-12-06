@@ -870,6 +870,8 @@ class PasswordResetHandler(BaseHandler):
 
             body_path = "emails/reset_password.txt"
             body = self.jinja2.render_template(body_path, **template_val)
+
+            logging.info("value is: %s" % reset_url)
             taskqueue.add(url = email_url, params={
                 'to': user.email,
                 'subject' : subject,
@@ -900,7 +902,6 @@ class PasswordResetCompleteHandler(BaseHandler):
                         'Enter your details again below to get a new one.')
             self.add_message(message, 'warning')
             return self.redirect_to('password-reset')
-
         else:
             return self.render_template('user/password_reset_complete.html', **params)
 
@@ -922,7 +923,7 @@ class PasswordResetCompleteHandler(BaseHandler):
             return self.redirect_to('home')
 
         else:
-            self.add_message(_('The two passwords must match.'), 'error')
+            self.add_message(_('Something went wrong.  Contact support.'), 'error')
             return self.redirect_to('password-reset-check', user_id=user_id, token=token)
 
     @webapp2.cached_property

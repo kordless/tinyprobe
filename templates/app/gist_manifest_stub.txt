@@ -1,10 +1,11 @@
 name: {{ name }}
-author: http://github.com/{{ username }}
+author: {{ github_user }}
 description: {{ description }}
-preview: {{ preview }}
 
 command: {{ command }}
-autorun: False 
+
+externals:
+  - http://d3js.org/d3.v2.js
 
 parameters:
   shape:
@@ -16,3 +17,5 @@ parameters:
 variables:
   height: 200
   width: 200
+  title: "My Chart"
+  data: [50,60,80,90,110,110,80,20]

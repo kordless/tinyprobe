@@ -433,46 +433,55 @@ footer ul {
 }
 
 #cards {
-	margin-left: 60px;
+	margin-left: 15px;
+    padding: 30px 0px 30px 0px;
 }
 #deck #cards {
 	*zoom: 1;
-	padding-top: 30px; 
+	padding-top: 0px; 
 }
 #deck #cards:after {
 	content: "";
 	display: table;
 	clear: both; 
 }
+.iconrow {
+    position: relative;
+    top: 240px;
+    margin-left: 8px;
+}
+.textrow {
+    margin-top: -20px;
+}
 .card {
     height: 280px;
-    margin: 30px 10px 20px 10px;
+    margin: 0px 10px 20px 10px;
     position: relative;
-    width: 320px;
+    width: 226px;
     cursor: pointer;
     -webkit-perspective: 600px;
     perspective: 600px;
 }
 .card h3 {
     font-size: 14px;
+    line-height: 16px;
     font-weight: bold;
-    margin: 20px 10px 10px;
+    margin: 8px 10px 0px 8px;
 }
 .card h4 {
-    margin: 20px 10px 0px;
+    margin: 8px 10px 0px 8px;
     font-size: 12px;
+    line-height: 14px;
     text-transform: uppercase;
 }
 .card strong {
     font-size: 12px;
     text-transform: uppercase;
 }
-.card p { margin: 0 10px 10px }
-.card a {
-    color: #999999;
-    font-weight: normal;
-    background: transparent url(../images/link_icon.png) 0 -38px no-repeat;
-    padding-left: 15px;
+.card p { 
+    font-size: 12px;
+    line-height: 14px;
+    margin: 4px 10px 0px 8px;
 }
 .card a:hover {
     color: #444;
@@ -620,37 +629,6 @@ footer ul {
     -o-transition-duration: 0s;
     transition-duration: 0s;
 }
-
-/* from stackgeek video cards */
-/*-----------------------------
-.isotope-item {
-  z-index: 2;
-}
- 
-.isotope-hidden.isotope-item {
-  pointer-events: none;
-  z-index: 1;
-}
- 
-.isotope,
-.isotope .isotope-item {
-  -webkit-transition-duration: 0.8s;
-     -moz-transition-duration: 0.8s;
-          transition-duration: 0.8s;
-}
- 
-.isotope {
-  -webkit-transition-property: height, width;
-     -moz-transition-property: height, width;
-          transition-property: height, width;
-}
- 
-.isotope .isotope-item {
-  -webkit-transition-property: -webkit-transform, opacity;
-     -moz-transition-property:    -moz-transform, opacity;
-          transition-property:         transform, opacity;
-}
----------------------*/
 
 /* blog shit */
 /*-----------*/

@@ -30,12 +30,12 @@
 			<h2 class="postdetail"><a href="/blog/{{ item.article_slug }}">{{ item.article_title }}</a></h2>
 			<div class="date_social">
     			<div class="date"><span class="label label-inverse">{{ item.created }}</span></div>
-				{{ macros.g_plus_widget("http://%s/blog/%s/%s/%s"%(item.article_host, item.article_owner, item.article_type, item.article_slug)) }}
-				{{ macros.tweet_widget("http://%s/blog/%s/%s/%s"%(item.article_host, item.article_owner, item.article_type, item.article_slug), item.article_summary) }}
+				{{ macros.g_plus_widget("http://%s/blog/%s"%(item.article_host, item.article_slug)) }}
+				{{ macros.tweet_widget("http://%s/blog/%s"%(item.article_host, item.article_slug), item.article_summary) }}
 			</div>
 			<p>by <a href="/blog/{{ item.article_owner }}">{{ item.article_owner }}</a>
 			{{ item.article_html }}
-			<a class="btn" href="/blog/{{ item.article_slug }}#comments">View Comments</a>
+			<a class="btn" href="/blog/{{ item.article_slug }}#disqus_thread">0 Comments</a>
 		</div>
 	{% endfor %}
 	</div>
@@ -54,4 +54,19 @@
 	</div>
 	{% endif %}
 </div>
+{% endblock %}
+
+{% block mediaJS %}
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'tinyprobe'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
 {% endblock %}

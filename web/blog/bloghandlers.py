@@ -341,8 +341,7 @@ class BlogArticleCreateHandler(BaseHandler):
         data = json.dumps({'description': "%s for TinyProbe" % title, 'files': file_data})
 
         # stuff it to github and then grab our gist_id
-        gist = github.put_user_gist(social_user.access_token, data)
-        gist_id = gist['id']
+        gist_id = github.put_user_gist(social_user.access_token, data)
 
         # prep the slug
         slug = utils.slugify(title)
