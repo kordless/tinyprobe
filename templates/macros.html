@@ -3,7 +3,7 @@
 	type, class, value, placeholder are noteable kwargs for the input element -->
 {% macro input(form, name, label, type='text') -%}
         <div class="control-group{% if getattr(form,name).errors %} error{% endif %}">
-            <label "control-label" for="{{ name }}">{{ label|safe }}{% if getattr(form,name).flags.required %}<span class="required">*</span>{% endif %}</label>
+            <label "control-label" for="{{ name }}">{{ label|safe }}{% if getattr(form,name).flags.required %}<span class="required">*</span>{% endif %}{% if name == 'password' %}<a class="forgot_pass" href="{{ uri_for("password-reset") }}">{% trans %}Forgot it?{% endtrans %}</a>{% endif %}</label>
             <div class="">
             {{ getattr(form,name)(type=type, **kwargs)|safe }}
             {% if getattr(form,name).errors %}
@@ -30,7 +30,7 @@
 <!-- navigation menu -->
 {% macro nav_menu(page, user_id) -%}
 <span class="nav-bits">
-  <ul class="nav nav-pills">
+  <ul class="nav nav-pills nav-link">
     <li>
       <a class='{% if page=="blog" %}active{% endif %}' href='{{ uri_for("blog") }}'>Blog</a>
     </li>
@@ -44,10 +44,10 @@
       <a class='{% if page=="pricing" %}active{% endif %}' href='{{ uri_for("pricing")}}'>Pricing</a>
     </li>
   </ul>
-  {% if not user_id %}{% if page != 'join' %}
+  {% if not user_id %}{% if page != 'join' and page != 'home' %}
     <ul class="nav">
       <li>
-        <button id="join" class="btn btn-primary">Join</button>
+        <button id="join" class="btn btn-invite">Get Invited</button>
       </li>
     </ul>
   {% endif %}{% endif %}
@@ -98,17 +98,18 @@
 {%- endmacro %}
 
 <!-- github gist fork widget -->
-{% macro fork_gist_widget(article_owner, article_id) -%}
-    <button id="fork-{{ article_id }}" class="fork btn btn-mini" title="fork this"type="button">
-        <i class="icon-share"></i>
+{% macro fork_gist_widget(app_id) -%}
+    <button id="fork-{{ app_id }}" class="fork btn btn-success" title="Fork this app."type="button">
+        <i class="icon-download-alt icon-white"></i>
+        Fork and Install App
     </button>
-    <div id="fork-modal-{{ article_id }}" class="modal hide fade">
+    <div id="fork-modal-{{ app_id }}" class="modal hide fade">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h2>Article Forked</h2>
+      <h2>App Forked</h2>
     </div>
     <div class="modal-body">
-      <p>This article has been forked and placed into your account as a draft.</p>
+      <p>This app has been forked and placed into your account.  You'll need to activate it before it can be used.</p>
     </div>
     <div class="modal-footer">
       <a href="#" id="cancel-button" class="btn btn-inverse" data-dismiss="modal">I Understand</a>
@@ -116,14 +117,14 @@
     </div>
     <script type="text/javascript">
         $(window).load(function(){
-            $('#fork-{{ article_id }}').click(function() {
-                var url = '/blog/{{ article_id }}/';
+            $('#fork-{{ app_id }}').click(function() {
+                var url = '/apps/{{ app_id }}/fork/';
                 console.log(url);
                 $.ajax({
                     url: url,
                     type: 'GET',
                     success: function() {
-                        $('#fork-modal-{{ article_id }}').modal();
+                        $('#fork-modal-{{ app_id }}').modal();
                     },
                 });
             });

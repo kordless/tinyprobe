@@ -22,7 +22,7 @@
         	{{ macros.input(form, "new_email", _("Email Address"), placeholder=_("Enter a new email address"), class="input-xlarge focused required email", type="email", value=current_email) }}
             {{ macros.input(form, "password", _("Current Password"), placeholder=_("Enter your")+" "+_("Password"), class="input-xlarge focused required", type="password") }}
             <div class="form-actions">
-                <button type="submit" class="btn btn-inverse btn-large">{% trans %}Change your email{% endtrans %}</button>
+                <button type="submit" class="btn btn-inverse btn-large"><i class="icon-white icon-envelope"></i> {% trans %}Change Email{% endtrans %}</button>
             </div>
         </fieldset>
     </form>

@@ -20,7 +20,7 @@
             <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
             {{ macros.input(form, "email", _("Email"), placeholder=_("foobar@baz.com"), class="input-xlarge focused required email", type="email") }}
             <div class="form-actions">
-                <button type="submit" class="btn btn-inverse btn-large">{% trans %}Send Me a Link{% endtrans %}</button>
+                <button type="submit" class="btn btn-inverse btn-large"><i class="icon-white icon-envelope"></i> {% trans %}Send Me a Link{% endtrans %}</button>
             </div>
         </fieldset>
     </form>

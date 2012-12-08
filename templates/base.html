@@ -29,7 +29,6 @@
     {% endif %}
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/bootstrap-responsive.css">
-    <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/tinyprobe.css">
     {% block mediaCSS %}{% endblock %}
     <script type="text/javascript">
@@ -130,7 +129,7 @@
           {% if messages|safe %}
           	{% for message in messages %}
               <p class="alert alert-{{ message[1]|safe }}">
-                  <a class="close" data-dismiss="alert">×</a>
+                  <a class="close whitex" data-dismiss="alert">×</a>
                   {{ message[0]|safe }}
               </p>
               {% endfor %}

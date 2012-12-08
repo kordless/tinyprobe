@@ -153,7 +153,7 @@ class Article(ndb.Model):
     def get_by_user_and_gist_id(cls, user, gist_id):
         # get() a single article by user/gist_id
         gist = cls.query(cls.owner == user, cls.gist_id == gist_id).get()
-        # logging.info("value is: %s" % gist)
+        logging.info("value is: %s" % gist)
         return gist
 
 
@@ -218,7 +218,6 @@ class App(ndb.Model):
     def get_by_user_and_gist_id(cls, user, gist_id):
         # get() a single app by user/gist_id
         gist = cls.query(cls.owner == user, cls.gist_id == gist_id).get()
-        # logging.info("value is: %s" % gist)
         return gist
 
     @classmethod
@@ -227,4 +226,10 @@ class App(ndb.Model):
         gists = app_query.fetch()
         return gists
 
+    @classmethod
+    def get_public(cls):
+        app_query = cls.query().filter(cls.public == True).order(App.updated)
+        gists = app_query.fetch()
+        return gists
 
+        

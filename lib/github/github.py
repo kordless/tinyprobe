@@ -178,29 +178,29 @@ def get_article_gists(github_user, access_token):
         # TODO do somthing if getting the gists fails
 
 
-def get_raw_gist_content(gist_id):
+def get_raw_gist_content(gist_id, gist_filename):
     markdown = memcache.get('%s:markdown' % gist_id)
     if markdown is not None:
         return markdown
     else:
-        # go fetch the current raw url from the gist_id
-        http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
-        headers, content = http.request('https://api.github.com/gists/%s' % gist_id, method='GET', body=None, headers=None)
-        gist = simplejson.loads(content)
+        logging.info("cache miss for %s" % gist_id)
+        if True:
+            # go fetch the current raw url from the gist_id
+            http = httplib2.Http(cache=None, timeout=10, proxy_info=None)
+            headers, content = http.request('https://api.github.com/gists/%s' % gist_id, method='GET', body=None, headers=None)
+            gist = simplejson.loads(content)
 
-        # if we find files, great!
-        try:
-            gist_markdown_url = gist['files'][config.gist_article_markdown_name]['raw_url']
-            # use that raw url to load the content and stuff it into memcache for an hour
-            http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
+            gist_markdown_url = gist['files'][gist_filename]['raw_url']
+            
+            # use that raw url to load the content and stuff it into memcache for a while
             headers, markdown = http.request(gist_markdown_url, method='GET', headers=None)
+            
             if not memcache.add('%s:markdown' % gist_id, markdown, config.memcache_expire_time):
-                markdown = ""
                 logging.info("memcache add of content from gist %s failed." % gist_id)
 
             return markdown
-        except:
-            logging.info("value is: %s" % "yeah, we're here alright")
+        if False:
+            logging.info("got an exception while talking to github")
             return False
 
 

@@ -23,15 +23,11 @@
             <div class="control-group">
                 <div class="controls">
                     <button type="submit" class="btn btn-inverse btn-large btn-login">{% trans %}Login{% endtrans %}</button>
-                    <label class="remember">
-                        <input type="checkbox" name="remember_me" id="remember_me" value="on">
-                        {% trans %}Remember me?{% endtrans %}
-                    </label>
+                    <label><input type="checkbox" name="remember_me" value="on" /><span class="remember_me">{% trans %}Remember me?{% endtrans %}</span></label>
+                    </p>
                 </div>
             </div>
-            <div class="control-group">
-                <a href="{{ uri_for("password-reset") }}">{% trans %}Forgot your password?{% endtrans %}</a>
-            </div>
+
             {{ macros.federated_login(provider_info, provider_uris, enable_federated_login) }}
         </fieldset>
     </form>

@@ -62,29 +62,35 @@ class AppsClearCacheHandler(BaseHandler):
 
 
 class AppsDetailHandler(BaseHandler):
-    @user_required
     def get(self, app_id = None):
-        # check this user owns this app OR it's public and can be viewed
-        user_info = models.User.get_by_id(long(self.user_id))
+        # load app info to check ownership, etc.       
         app = models.App.get_by_id(long(app_id))
 
         # show it if current user is the owner or it's been made public
-        if app.owner == user_info.key or app.public == True:
-            params = {'app': app}
-            return self.render_template('app/app_detail.html', **params)
-        else:
-            params = { }
-            return self.render_template('app/app_list.html', **params)
+        if True:
+            if long(app.owner.id()) == long(self.user_id):
+                params = {'app': app}
+                return self.render_template('app/app_detail.html', **params)
+            elif app.public == True:
+                params = {'app': app}
+                return self.render_template('app/app_public_detail.html', **params)
+            else:
+                params = { }
+                return self.redirect_to('apps', {})
+        if False:
+            return self.redirect_to('home', {})
 
+    @user_required
     def delete(self, app_id = None):
         # pull the github token out of the social user db
         user_info = models.User.get_by_id(long(self.user_id))
         social_user = models.SocialUser.get_by_user_and_provider(user_info.key, 'github')
-        
+
         # delete the app from the db
         app = models.App.get_by_id(long(app_id))
 
-        if app:
+        # user owns this app?
+        if long(app.owner.id()) == long(self.user_id):
             app.key.delete()
             github.delete_user_gist(social_user.access_token, app.gist_id)
             self.add_message(_('App successfully deleted!'), 'success')
@@ -102,13 +108,25 @@ class AppsDetailHandler(BaseHandler):
 
 
 class AppsPublicHandler(BaseHandler):
-    @user_required
     def get(self):
-        # serve all public apps
-        return
-        # test yanking a gist
-        # gist = models.App.get_by_user_and_gist_id(user_info.key, '3902522')
-        # logging.info("value is: %s" % gist)
+        # pull the github token out of the social user db
+        try:
+            user_info = models.User.get_by_id(long(self.user_id))
+            social_user = models.SocialUser.get_by_user_and_provider(user_info.key, 'github')
+        except:
+            # unauth'd browser
+            user_info = False
+            social_user = False
+
+        apps = models.App.get_public()
+
+        if not apps:
+            # no apps?  wtf?
+            params = {}
+            return self.redirect_to('home', **params)
+        else:
+            params = {'apps': apps, 'user_info': user_info}
+            return self.render_template('app/app_public_list.html', **params)
 
 
 # JOB SCHEDULER

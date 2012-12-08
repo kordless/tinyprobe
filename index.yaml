@@ -15,6 +15,11 @@ indexes:
   - name: owner
   - name: command
 
+- kind: App
+  properties:
+  - name: public
+  - name: updated
+
 - kind: Apps
   properties:
   - name: owner

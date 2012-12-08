@@ -50,9 +50,8 @@ class PublicBlogHandler(BaseHandler):
         
         # loop through all articles
         for article in articles:
-            logging.info("value is: %s" % article)
             # if there's content on Github to serve
-            raw_gist_content = github.get_raw_gist_content(article.gist_id)
+            raw_gist_content = github.get_raw_gist_content(article.gist_id, config.gist_article_markdown_name)
 
             if raw_gist_content:
                 # sanitize javascript
@@ -99,7 +98,7 @@ class PublicBlogRSSHandler(BaseHandler):
 
         entries = []
         for article in articles[0:10]:
-            raw_gist_content = github.get_raw_gist_content(article.gist_id)
+            raw_gist_content = github.get_raw_gist_content(article.gist_id, config.gist_article_markdown_name)
 
             if raw_gist_content:
                 owner_info = models.User.get_by_id(article.owner.id())
@@ -153,8 +152,8 @@ class BlogArticleSlugHandler(BaseHandler):
         if not article:
             return self.render_template('errors/default_error.html')
 
-        raw_gist_content = github.get_raw_gist_content(article.gist_id)
-        logging.info("value is: %s" % article.gist_id)
+        raw_gist_content = github.get_raw_gist_content(article.gist_id, config.gist_article_markdown_name)
+
         # if there's content on Github to serve
         if raw_gist_content:
             owner_info = models.User.get_by_id(article.owner.id())
@@ -341,13 +340,16 @@ class BlogArticleCreateHandler(BaseHandler):
         data = json.dumps({'description': "%s for TinyProbe" % title, 'files': file_data})
 
         # stuff it to github and then grab our gist_id
-        gist_id = github.put_user_gist(social_user.access_token, data)
+        gist = github.put_user_gist(social_user.access_token, data)
+        gist_id = gist['id']
 
         # prep the slug
         slug = utils.slugify(title)
         
         # make sure it's not already in the database (unlikely)
-        if not models.Article.get_by_user_and_gist_id(user_info.key, gist_id):
+        articles = models.Article.get_by_user_and_gist_id(user_info.key, gist_id)
+
+        if not articles:
             # save the article in our database            
             article = models.Article(
                 title = title,
