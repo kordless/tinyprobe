@@ -51,7 +51,8 @@ else:
 
 # gist settings for apps
 gist_template_id = '4185065'
-gist_html_name = 'tinyprobe.html'
+gist_index_html_name = 'index.html'
+gist_tinyprobe_html_name = 'tinyprobe.html'
 gist_manifest_name = 'tinyprobe.manifest'
 gist_javascript_name = 'tinyprobe.js'
 gist_thumbnail_name = 'tinyprobe.png'

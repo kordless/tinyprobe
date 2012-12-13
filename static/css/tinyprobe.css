@@ -36,20 +36,12 @@ html, body {
 	border-radius: 6px;
 }
 .hero {
-    background: #F0F0F0;
     border-top: 3px solid #EBEBEB;
     border-bottom: 1px solid #E1E1E1;
-    margin-bottom: 30px;
-    padding: 30px 0 31px;
-    width: 940px;
     margin-left: auto;
     margin-right: auto;
-    zoom: 1;
+    margin-bottom: 20px;
     text-align: center;
-    background: #F0F0F0;
-    border-top: 3px solid #EBEBEB;
-    border-bottom: 1px solid #E1E1E1;
-    margin-bottom: 30px;
     padding: 70px 0 6px;
     width: 100%;
 }
@@ -65,6 +57,9 @@ html, body {
 .hero h2 {
     font-size: 42px;
     font-weight: bold;
+    position: absolute; 
+    top: 60px; 
+    width: 100%; 
 }
 #home .hero h2 {
     font-size: 40px;
@@ -80,7 +75,7 @@ html, body {
     line-height: 30px;
 }
 .hero .big-media {
-    margin-top: 20px;
+    margin-top: -20px;
 }
 
 .hero .big-media img {
@@ -125,6 +120,7 @@ a.close:link {
 
 .alert {
 	border: none;
+    text-shadow: none;
 }
 
 .alert-success {
@@ -226,7 +222,7 @@ a.brand {
 }
 
 .navbar .nav.pull-right {
-	margin: 6px 4px 6px;
+	margin: 6px 10px 6px;
 }
 
 .dropdown-menu {
@@ -256,7 +252,7 @@ a.brand:hover {
 }
 .navbar .brand {
     margin: 8px 0px 6px;
-    padding-left: 4px;
+    padding-left: 10px;
     color: black;
     font-weight: 200;
 }
@@ -604,7 +600,6 @@ span.app_name {
     margin: 8px 10px 0px 8px;
     font-size: 12px;
     line-height: 14px;
-    text-transform: uppercase;
 }
 .card strong {
     font-size: 12px;
@@ -729,11 +724,11 @@ span.app_name {
 }
 .isotope,
 .isotope .isotope-item {
-    -webkit-transition-duration: 0.8s;
-    -moz-transition-duration: 0.8s;
-    -ms-transition-duration: 0.8s;
-    -o-transition-duration: 0.8s;
-    transition-duration: 0.8s;
+    -webkit-transition-duration: 0s;
+    -moz-transition-duration: 0s;
+    -ms-transition-duration: 0s;
+    -o-transition-duration: 0s;
+    transition-duration: 0s;
 }
 .isotope {
     -webkit-transition-property: height, width;
@@ -759,12 +754,22 @@ span.app_name {
     transition-duration: 0s;
 }
 
+/* apps shit */
+/*-----------*/
+.markdown pre code, .markdown code, .markdown pre{
+    font-size: 12px;
+    font-family: monospace;
+}
+div.markdown {
+    margin-bottom: 100px;
+}
 /* blog shit */
 /*-----------*/
 .blog pre code, .blog code, .blog pre{
     font-size: 12px;
     font-family: monospace;
 }
+
 div.blog {
     margin-top: 20px;
 }
@@ -792,7 +797,7 @@ h2.post a{
 }
 h2.postdetail {
     font-weight: bold;
-    font-size: 30px;
+    font-size: 40px;
     margin: 0 0 10px; !important;
 }
 h2.postdetail a{

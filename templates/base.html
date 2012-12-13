@@ -61,9 +61,9 @@
                       {% block extra_nav %}{% endblock %}
                       {% if user_id %}
                       <li class="dropdown">
-                          <button class="btn btn-inverse" data-toggle="dropdown">@{{ username }} <b class="caret"></b></button>
+                          <button class="btn btn-inverse btn-dropdown" data-toggle="dropdown">@{{ username }} <b class="caret"></b></button>
                           <ul class="dropdown-menu">
-                              <li><a href="{{ uri_for("shell") }}" target="_blank">New Shell</a></li> 
+                              <li><a id="new-shell" href="{{ uri_for("shell") }}" target="_blank">New Shell</a></li> 
                               <li><a href="{{ uri_for("apps") }}">My Apps</a></li>
                               <li class="divider"></li>
                               {% if admin %}
@@ -265,6 +265,11 @@
                 $('input[name=' + name + ']').val(text);
             });
           }, 200);
+
+          // close menu when someone clicks on 'new shell'
+          $('#new-shell').click(function(){
+            $('.btn-dropdown').dropdown('toggle');
+          });
       });
     }
   </script>

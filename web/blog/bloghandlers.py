@@ -417,12 +417,14 @@ class BlogClearCacheHandler(BaseHandler):
         user_info = models.User.get_by_id(long(self.user_id))
         article = models.Article.get_by_id(long(article_id))
 
-        if article.owner == user_info.key and github.flush_raw_gist_content(article.gist_id):
-            message = 'Article was flushed from cache.'
+        if article.owner == user_info.key:
+            github.flush_raw_gist_content(article.gist_id, config.gist_article_markdown_name)
+            response = 'Article was flushed from cache.'
         else:
-            message = 'Something went wrong flushing from cache!'
+            response = 'Something went wrong flushing from cache!'
         
-        return message
+        params = {'blog_response': response}
+        return self.render_template('blog/blog_response.html', **params)
 
 
 # special class for routing menu in base.html template when user is logged in or logged out

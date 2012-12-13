@@ -67,6 +67,7 @@ _routes = [
     RedirectRoute('/apps/buildlist/', apphandlers.AppsBuildListHandler, name='apps-build', strict_slash=True),
     RedirectRoute('/apps/<app_id>/', apphandlers.AppsDetailHandler, name='apps-detail', strict_slash=True),
     RedirectRoute('/apps/<app_id>/refresh/', apphandlers.AppsClearCacheHandler, name='blog-clearcache', strict_slash=True),
+    RedirectRoute('/apps/<app_id>/<filename>', apphandlers.AppsServeContentHandler, name='blog-clearcache', strict_slash=True),
 
     # shell
     RedirectRoute('/shell/', shellhandlers.ShellHandler, name='shell', strict_slash=True),

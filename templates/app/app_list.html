@@ -1,7 +1,7 @@
 {% extends base_layout %}
 
-{% block header_title %}
-        {% trans %}Apps{% endtrans %}
+{% block title %}
+        {% trans %}Apps{% endtrans %} -
 {% endblock %}
 
 {% block header_title_lead %}
@@ -39,11 +39,11 @@
                 <h3><span class="app_name">{{ item.name }}{% if not item.public %}</span><i class="icon-lock icon-white"></i>{% endif %}</h3>
                 <p class="app_author">by <a href="http://github.com/{{ item.github_author }}">@{{ item.github_author }}</a></p>
                 <p class="app_desc">{{ item.description }}</p>
-                <h4>Usage</h4>
+                <h4>Shell Usage</h4>
                 <p class="app_command">$ {{ item.command }}</p>
             </div>
             <div class="iconrow">
-                <a rel="tooltip" id="setup-{{item.key.id()}}" class="btn btn-small" title="Setup" href="#"><i class="icon-list-alt"></i></a>
+                <a rel="tooltip" id="setup-{{item.key.id()}}" class="btn btn-small" title="Details" href="#"><i class="icon-list-alt"></i></a>
                 <a rel="tooltip" id="edit-{{item.gist_id}}" class="btn btn-small" title="Edit" href="#"><i class="icon-pencil"></i></a>
                 <a rel="tooltip" id="refresh-{{item.key.id()}}" class="btn btn-small" title="Clear Memcache Copy" href="#"><i class="icon-refresh"></i></a>
                 <button id="remove-{{item.key.id()}}" class="btn btn-small" title="Remove" href="#"><i class="icon-remove"></i></button>

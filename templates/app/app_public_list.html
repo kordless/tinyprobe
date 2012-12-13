@@ -4,6 +4,8 @@
         {% trans %}Apps{% endtrans %}
 {% endblock %}
 
+{% block extra_nav %}{{ macros.nav_menu('', user_id) }}{% endblock %}
+
 {% block header_title_lead %}
     <h1>Public Apps</h1>
     <p class="lead">

@@ -70,6 +70,7 @@ class GithubAuth(object):
 ################
 # user methods #
 ################
+
 def get_user_info(access_token):
     params = {'access_token': access_token}
     base_uri = 'https://api.github.com/user'
@@ -179,33 +180,33 @@ def get_article_gists(github_user, access_token):
 
 
 def get_raw_gist_content(gist_id, gist_filename):
-    markdown = memcache.get('%s:markdown' % gist_id)
-    if markdown is not None:
-        return markdown
+    content = memcache.get('%s:gist-%s' % (gist_id, gist_filename))
+    if content is not None:
+        return content
     else:
         logging.info("cache miss for %s" % gist_id)
-        if True:
+        try:
             # go fetch the current raw url from the gist_id
             http = httplib2.Http(cache=None, timeout=10, proxy_info=None)
             headers, content = http.request('https://api.github.com/gists/%s' % gist_id, method='GET', body=None, headers=None)
+            content = content.decode('utf-8', 'replace')
             gist = simplejson.loads(content)
+            gist_filename_url = gist['files'][gist_filename]['raw_url']
 
-            gist_markdown_url = gist['files'][gist_filename]['raw_url']
-            
             # use that raw url to load the content and stuff it into memcache for a while
-            headers, markdown = http.request(gist_markdown_url, method='GET', headers=None)
+            headers, content = http.request(gist_filename_url, method='GET', headers=None)
             
-            if not memcache.add('%s:markdown' % gist_id, markdown, config.memcache_expire_time):
+            if not memcache.add('%s:gist-%s' % (gist_id, gist_filename), content, config.memcache_expire_time):
                 logging.info("memcache add of content from gist %s failed." % gist_id)
 
-            return markdown
-        if False:
+            return content
+        except:
             logging.info("got an exception while talking to github")
             return False
 
 
-def flush_raw_gist_content(gist_id):
-    if memcache.delete('%s:markdown' % gist_id):
+def flush_raw_gist_content(gist_id, gist_filename):
+    if memcache.delete('%s:gist:%s' % (gist_id, gist_filename)):
         logging.info("flushed cache!")
         return True
     else:

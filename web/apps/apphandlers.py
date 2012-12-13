@@ -7,6 +7,7 @@ App Handlers
 import logging, os
 import urllib, urllib2, hashlib, json, httplib2
 import datetime
+import mimetypes
 from lib.i18n import get_territory_from_ip
 
 # related third party imports
@@ -26,10 +27,46 @@ import web.models.models as models
 from lib import utils, httpagentparser, captcha
 from web.basehandler import BaseHandler
 from web.basehandler import user_required
+import bleach
 
 # social login
 from lib.github import github
 from lib.twitter import twitter
+from lib.markdown import markdown
+
+class AppsServeContentHandler(BaseHandler):
+    # look up our app
+    def get(self, app_id=None, filename=None):
+        app = models.App.get_by_id(long(app_id))
+
+        if app:
+            # pull down the raw content for the filename in the gist
+            raw_gist_content = github.get_raw_gist_content(app.gist_id, filename)
+
+            if not raw_gist_content:
+                return self.render_template('errors/default_error.html')
+            
+            # set mimetype for file
+            mimetype = mimetypes.guess_type(filename)[0]
+            if mimetype:
+                self.response.headers['Content-Type'] = mimetype
+            else:
+                self.response.headers['Content-Type'] = 'text/plain'
+
+            # only show the content if the app's perms allow it
+            params = {'app_content': raw_gist_content}
+            if app.public == True:
+                return self.render_template('app/app_content.html', **params)
+            else:
+                try:
+                    if long(app.owner.id()) == long(self.user_id):
+                        return self.render_template('app/app_content.html', **params)
+                    else:
+                        return self.render_template('errors/default_error.html')
+                except:
+                    return self.render_template('errors/default_error.html')
+        else:
+            return self.render_template('errors/default_error.html')
 
 
 # setup user's repository by forking ours
@@ -53,12 +90,19 @@ class AppsClearCacheHandler(BaseHandler):
         user_info = models.User.get_by_id(long(self.user_id))
         app = models.App.get_by_id(long(app_id))
 
-        if app.owner == user_info.key and github.flush_raw_gist_content(app.gist_id):
-            message = 'Article was flushed from cache.'
-        else:
-            message = 'Something went wrong flushing from cache!'
+        # we cache four files for each app - readme.md, index.html, tinyprobe.html, tinyprobe.js
+        files = [config.gist_markdown_name, config.gist_index_html_name, config.gist_tinyprobe_html_name, config.gist_javascript_name]
+
+        if app.owner == user_info.key:
+            for afile in files:
+                github.flush_raw_gist_content(app.gist_id, afile)
         
-        return message
+            response = 'Article was flushed from cache.'
+        else:
+            response = 'Something went wrong flushing from cache!'
+        
+        params = {'app_response': response}
+        return self.render_template('app/app_response.html', **params)
 
 
 class AppsDetailHandler(BaseHandler):
@@ -66,19 +110,22 @@ class AppsDetailHandler(BaseHandler):
         # load app info to check ownership, etc.       
         app = models.App.get_by_id(long(app_id))
 
+        # pull down the readme.md file and render to HTML
+        raw_gist_content = github.get_raw_gist_content(app.gist_id, config.gist_markdown_name)
+        app_html = bleach.clean(markdown.markdown(raw_gist_content), config.bleach_tags, config.bleach_attributes)
+
         # show it if current user is the owner or it's been made public
-        if True:
+        try:
             if long(app.owner.id()) == long(self.user_id):
-                params = {'app': app}
+                params = {'app_name': bleach.clean(app.name), 'app_description': bleach.clean(app.description), 'app_html': app_html}
                 return self.render_template('app/app_detail.html', **params)
-            elif app.public == True:
-                params = {'app': app}
+        except:
+            if app.public == True:
+                params = {'app_name': bleach.clean(app.name), 'app_description': bleach.clean(app.description), 'app_html': app_html}
                 return self.render_template('app/app_public_detail.html', **params)
             else:
-                params = { }
+                params = {}
                 return self.redirect_to('apps', {})
-        if False:
-            return self.redirect_to('home', {})
 
     @user_required
     def delete(self, app_id = None):
@@ -90,17 +137,23 @@ class AppsDetailHandler(BaseHandler):
         app = models.App.get_by_id(long(app_id))
 
         # user owns this app?
-        if long(app.owner.id()) == long(self.user_id):
-            app.key.delete()
-            github.delete_user_gist(social_user.access_token, app.gist_id)
-            self.add_message(_('App successfully deleted!'), 'success')
-        else:
-            self.add_message(_('App was not deleted.  Something went horribly wrong somewhere!'), 'warning')
-        
+        try:
+            if long(app.owner.id()) == long(self.user_id):
+                app.key.delete()
+                github.delete_user_gist(social_user.access_token, app.gist_id)
+                self.add_message(_('App successfully deleted!'), 'success')
+                response = "App successfully deleted!"
+            else:
+                response = "Did you really think that would work without auth'ing?"
+        except:
+            response = "Did you really think that would work without auth'ing?"
+            
         # notify browser through channel
         channel_token = self.request.get('channel_token')
         channel.send_message(channel_token, 'reload')
-        return
+
+        params = {'app_response': response}
+        return self.render_template('app/app_response.html', **params)
 
     @webapp2.cached_property
     def form(self):
@@ -191,8 +244,12 @@ class AppsBuildListHandler(BaseHandler):
                 app2.put()
 
                 # flush memcache copy just in case we had it
-                github.flush_raw_gist_content(app2.gist_id)
-                                
+                # we cache four files for each app - readme.md, index.html, tinyprobe.html, tinyprobe.js
+                files = [config.gist_markdown_name, config.gist_index_html_name, config.gist_tinyprobe_html_name, config.gist_javascript_name]
+
+                for afile in files:
+                    github.flush_raw_gist_content(app2.gist_id, afile)
+               
             # use the channel to tell the browser we are done
             channel_token = self.request.get('channel_token')
             channel.send_message(channel_token, 'reload')
@@ -293,7 +350,8 @@ class AppsCreateHandler(BaseHandler):
         files = {
             config.gist_manifest_name: self.jinja2.render_template("app/gist_manifest_stub.txt", **template_val),
             config.gist_javascript_name: self.jinja2.render_template("app/gist_javascript_stub.txt", **template_val),
-            config.gist_html_name: self.jinja2.render_template("app/gist_html_stub.txt", **template_val),
+            config.gist_index_html_name: self.jinja2.render_template("app/gist_index_html_stub.txt", **template_val),
+            config.gist_tinyprobe_html_name: self.jinja2.render_template("app/gist_tinyprobe_html_stub.txt", **template_val),
             config.gist_markdown_name: self.jinja2.render_template("app/gist_markdown_stub.txt", **template_val)
         }
 
