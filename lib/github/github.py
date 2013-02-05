@@ -95,20 +95,22 @@ def get_user_gists(github_user, access_token):
     base_uri = 'https://api.github.com/users/%s/gists' % github_user
     uri = '%s?%s' % (base_uri, urllib.urlencode(params))
     
-    try:
+    if True:
         # request data from github gist API
         http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
+        logging.info("value is: %s" % uri)
         headers, content = http.request(uri, method='GET', body=None, headers=None)
         gists = simplejson.loads(content)
 
         # transform gists into apps
         apps = []
         for gist in gists:
-            try:
-                # grab the raw file and parse it for yaml bits
-                if gist['files'][config.gist_manifest_name]['raw_url']:
-                    headers, content = http.request(gist['files'][config.gist_manifest_name]['raw_url'])
-                    manifest = yaml.load(content)
+            
+            # grab the raw file and parse it for yaml bits
+            if config.gist_manifest_name in gist['files']:
+                logging.info("value is: %s" % gist['id'])
+                headers, content = http.request(gist['files'][config.gist_manifest_name]['raw_url'])
+                manifest = yaml.load(content)
 
                 # assign the thumbnail
                 if gist['public']:
@@ -127,16 +129,48 @@ def get_user_gists(github_user, access_token):
                     'url': gist['html_url'],
                     'public': gist['public'],
                 })
-            
-            except:
-                # gist didn't have a tinyprobe.manifest file - so sad
-                pass
 
         return apps
 
-    except:
-        return False        
-        
+    if False:
+        return []        
+    
+
+def get_gist_manifest(gist_id):
+    if True:
+        http = httplib2.Http(cache=None, timeout=10, proxy_info=None)
+        headers, content = http.request('https://api.github.com/gists/%s' % (gist_id) , method='GET', body=None, headers=None)
+        content = content.decode('utf-8', 'replace')
+        gist = simplejson.loads(content)
+
+        # grab the raw manifest file and parse it for yaml bits
+        if gist:
+            manifest = yaml.load(gist['files'][config.gist_manifest_name]['content'])
+
+            # assign the thumbnail
+            if gist['public']:
+                thumb_url = gist['files'][config.gist_thumbnail_name]['raw_url']
+            else:
+                thumb_url = config.gist_thumbnail_default_url
+
+            app = {
+                'name': manifest['name'],
+                'command': manifest['command'],
+                'github_author': manifest['author'],
+                'gist_id': gist['id'],
+                'description': manifest['description'],
+                'thumb_url': thumb_url,
+                'url': gist['html_url'],
+                'public': gist['public'],
+            }
+        else:
+            app = False
+
+    if False:
+        app = False
+
+    return app
+
 
 # for the blog
 def get_article_gists(github_user, access_token):
@@ -179,8 +213,27 @@ def get_article_gists(github_user, access_token):
         # TODO do somthing if getting the gists fails
 
 
+# get a gist's filenames - doesn't require token because we have the gist hash - real secure guys.  not!
+def get_gist_filenames(gist_id):
+    try:
+        # go fetch the current raw url from the gist_id
+        http = httplib2.Http(cache=None, timeout=10, proxy_info=None)
+        headers, content = http.request('https://api.github.com/gists/%s' % (gist_id), method='GET', body=None, headers=None)
+        content = content.decode('utf-8', 'replace')
+        gist = simplejson.loads(content)
+
+        files = []
+        for afile in gist['files']:
+            files.append(afile)
+
+        return files
+
+    except:
+        pass
+
+
 def get_raw_gist_content(gist_id, gist_filename):
-    content = memcache.get('%s:gist-%s' % (gist_id, gist_filename))
+    content = memcache.get('gist-%s:%s' % (gist_id, gist_filename))
     if content is not None:
         return content
     else:
@@ -188,15 +241,16 @@ def get_raw_gist_content(gist_id, gist_filename):
         try:
             # go fetch the current raw url from the gist_id
             http = httplib2.Http(cache=None, timeout=10, proxy_info=None)
-            headers, content = http.request('https://api.github.com/gists/%s' % gist_id, method='GET', body=None, headers=None)
+            headers, content = http.request('https://api.github.com/gists/%s' % (gist_id) , method='GET', body=None, headers=None)
             content = content.decode('utf-8', 'replace')
             gist = simplejson.loads(content)
             gist_filename_url = gist['files'][gist_filename]['raw_url']
 
             # use that raw url to load the content and stuff it into memcache for a while
             headers, content = http.request(gist_filename_url, method='GET', headers=None)
+            content = content.decode('utf-8', 'replace')
             
-            if not memcache.add('%s:gist-%s' % (gist_id, gist_filename), content, config.memcache_expire_time):
+            if not memcache.add('gist-%s:%s' % (gist_id, gist_filename), content, config.memcache_expire_time):
                 logging.info("memcache add of content from gist %s failed." % gist_id)
 
             return content
@@ -206,7 +260,7 @@ def get_raw_gist_content(gist_id, gist_filename):
 
 
 def flush_raw_gist_content(gist_id, gist_filename):
-    if memcache.delete('%s:gist:%s' % (gist_id, gist_filename)):
+    if memcache.delete('gist-%s:%s' % (gist_id, gist_filename)):
         logging.info("flushed cache!")
         return True
     else:
@@ -215,14 +269,24 @@ def flush_raw_gist_content(gist_id, gist_filename):
 
 
 def fork_gist(access_token, gist_id):
-    try:
+    if True:
         params = {'access_token': access_token}
-        uri = 'https://api.github.com/gists/%s/fork?%s' % (gist_id, urllib.urlencode(params))
         http = httplib2.Http(cache=None, timeout=None, proxy_info=None)
+        
+        # first fork it
+        uri = 'https://api.github.com/gists/%s/fork?%s' % (gist_id, urllib.urlencode(params))
         headers, content = http.request(uri, method='POST', headers=None)
+        content = content.decode('utf-8', 'replace')
         gist = simplejson.loads(content)
+        
+        # now grab the new ID and fetch the new gist (because the prior call is breaking, thanks github)
+        uri = '%s?%s' % (gist['url'], urllib.urlencode(params))
+        headers, content = http.request(uri, method='GET', headers=None)
+        content = content.decode('utf-8', 'replace')
+        gist = simplejson.loads(content)
+
         return gist
-    except:
+    if False:
         logging.info("%s was not forked for some reason" % (gist_id))
         return False
 

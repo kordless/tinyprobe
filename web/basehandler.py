@@ -15,6 +15,8 @@ import config
 from lib import utils, i18n
 from babel import Locale
 import web.models.models as models
+import bleach
+import time
 
 def user_required(handler):
     """
@@ -50,11 +52,16 @@ def generate_csrf_token():
         session['_csrf_token'] = utils.random_string()
     return session['_csrf_token']
 
+
+def bleach_clean(value):
+    return bleach.clean(value, config.bleach_tags, config.bleach_attributes)
+
+
 def jinja2_factory(app):
     j = jinja2.Jinja2(app)
     j.environment.filters.update({
         # Set filters.
-        # ...
+        'bleach': bleach_clean,
     })
     j.environment.globals.update({
         # Set global variables.
@@ -181,6 +188,20 @@ class BaseHandler(webapp2.RequestHandler):
         return  None
 
     @webapp2.cached_property
+    def name(self):
+        if self.user:
+            try:
+                user_info = models.User.get_by_id(long(self.user_id))
+                return "%s %s" % (user_info.name, user_info.last_name)
+                
+            except AttributeError, e:
+                # avoid AttributeError when the session was delete from the server
+                logging.error(e)
+                self.auth.unset_session()
+                self.redirect_to('home')
+        return  None
+
+    @webapp2.cached_property
     def username(self):
         if self.user:
             try:
@@ -215,7 +236,22 @@ class BaseHandler(webapp2.RequestHandler):
                 self.auth.unset_session()
                 self.redirect_to('home')
         return  None
-    
+
+    @webapp2.cached_property
+    def created(self):
+        if self.user:
+            try:
+                user_info = models.User.get_by_id(long(self.user_id))
+                pattern = '%Y-%m-%d %H:%M:%S.%f'
+                epoch = int(time.mktime(time.strptime(str(user_info.created), pattern)))
+                return epoch
+            except AttributeError, e:
+                # avoid AttributeError when the session was delete from the server
+                logging.error(e)
+                self.auth.unset_session()
+                self.redirect_to('home')
+        return  None
+
     @webapp2.cached_property
     def provider_uris(self):
         from google.appengine.api import users
@@ -312,8 +348,10 @@ class BaseHandler(webapp2.RequestHandler):
             'google_analytics_code' : config.google_analytics_code,
             'app_name': config.app_name,
             'user_id': self.user_id,
+            'name': self.name,
             'username': self.username,
             'email': self.email,
+            'created': self.created,
             'url': self.request.url,
             'path': self.request.path,
             'query_string': self.request.query_string,
@@ -327,6 +365,7 @@ class BaseHandler(webapp2.RequestHandler):
             'provider_info': self.provider_info,
             'enable_federated_login': config.enable_federated_login,
             'base_layout': self.get_base_layout,
+            'admin_interface_url': config.admin_interface_url,
             'admin': self.is_admin,
             })
 

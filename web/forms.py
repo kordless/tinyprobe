@@ -67,7 +67,7 @@ class PasswordResetCompleteMobileForm(PasswordMixin):
 class LoginForm(BaseForm):
     password = fields.TextField(_('Password'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)], id='l_password')
     username = fields.TextField(_('Username'), [validators.Required(), validators.Length(max=FIELD_MAXLENGTH)], id='l_username')
-
+    back_to = fields.HiddenField(id='back_to')
 
 class ContactForm(BaseForm):
     email = fields.TextField(_('Email'), [validators.Required(), validators.Length(min=7, max=FIELD_MAXLENGTH), validators.regexp(utils.EMAIL_REGEXP, message=_('Invalid email address.'))])

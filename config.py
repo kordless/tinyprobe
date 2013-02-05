@@ -49,6 +49,11 @@ else:
 	github_client_id = 'd43f79b4e7c21fa43454'
 	github_client_secret = 'a64ddfdc29dcf0c7590147476014950bf160883f'
 
+if os.environ['SERVER_SOFTWARE'].startswith('Dev'):
+	admin_interface_url = 'http://localhost:8101/_ah/admin/datastore'
+else:
+	admin_interface_url = 'https://appengine.google.com/dashboard?&app_id=s~tinyprobe'
+	
 # gist settings for apps
 gist_template_id = '4185065'
 gist_index_html_name = 'index.html'

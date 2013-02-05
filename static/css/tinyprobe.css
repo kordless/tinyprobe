@@ -578,6 +578,9 @@ footer ul {
 .iconrow {
     margin-left: 10px;
 }
+.iconrow .tooltip {
+    background-color: red;
+}
 span.app_name {
     margin-right: 4px;
 }
@@ -607,8 +610,8 @@ span.app_name {
 }
 .card p { 
     font-size: 12px !important;
-    line-height: 14px;
-    margin: 4px 10px 0px 8px;
+    line-height: 13px;
+    margin: 6px 10px 0px 8px;
 }
 .card a:hover {
     color: #444;
@@ -639,11 +642,11 @@ span.app_name {
     -webkit-box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
     box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
-    -webkit-transition-duration: 0.5s, 0.2s;
-    -moz-transition-duration: 0.5s, 0.2s;
-    -ms-transition-duration: 0.5s, 0.2s;
-    -o-transition-duration: 0.5s, 0.2s;
-    transition-duration: 0.5s, 0.2s;
+    -webkit-transition-duration: 1s, 1s;
+    -moz-transition-duration: 1s, 1s;
+    -ms-transition-duration: 1s, 1s;
+    -o-transition-duration: 1s, 1s;
+    transition-duration: 1s, 1s;
     -webkit-transition-property: -webkit-transform, box-shadow;
     -moz-transition-property: -moz-transform, box-shadow;
     -ms-transition-property: -ms-transform, box-shadow;
@@ -670,10 +673,10 @@ span.app_name {
 .card .back {
     z-index: 800;
     border-color: #cccccc;
-    background: #444;
+    background: #000;
     border-color: #444;
     color: #fff;
-    -webkit-transform: rotateY(-180deg);
+    -webkit-transform: rotateY(-200deg);
     -moz-transform: rotateY(-180deg);
     -ms-transform: rotateY(-180deg);
     -o-transform: rotateY(-180deg);
@@ -762,6 +765,9 @@ span.app_name {
 }
 div.markdown {
     margin-bottom: 100px;
+}
+p.app_author {
+    margin-top: 0px;
 }
 /* blog shit */
 /*-----------*/

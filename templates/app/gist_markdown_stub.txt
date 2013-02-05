@@ -1,6 +1,3 @@
-# {{ name }}
-{{ description }} by [{{ github_user }}](http://github.com/{{ github_user }})
-
 ## Usage
 {{ command }} parameter1 parameter2
 
@@ -11,10 +8,8 @@ A really cool visualization!
 ## Features
 * awesome visualization
 * moves and updates
-* data scientist for the win
+* shows values
 
 ## Examples
-``` javascript
-   // this is some sample code
-   alert("foobar");
-```
+    // this is some sample code
+    alert("foobar");

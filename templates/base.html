@@ -41,7 +41,22 @@
             ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
+
     </script>
+    <script id="IntercomSettingsScriptTag">
+      window.intercomSettings = {
+        username: "{{ username }}",
+        email: "{{ email }}",
+        created_at: {{ created }},
+        is_mobile: {{ is_mobile }},
+        admin: {{ admin }},
+        name: "{{ name }}",
+        app_id: "ejah6r72"
+      };
+    </script>
+    <script>(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',intercomSettings);}else{var d=document;var i=function(){i.c(arguments)};i.q=[];i.c=function(args){i.q.push(args)};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://api.intercom.io/api/js/library.js';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);}if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}};})()
+    </script>
+
     <script src="/js/libs/modernizr-2.6.1.min.js"></script>
 </head>
 <body>
@@ -63,14 +78,15 @@
                       <li class="dropdown">
                           <button class="btn btn-inverse btn-dropdown" data-toggle="dropdown">@{{ username }} <b class="caret"></b></button>
                           <ul class="dropdown-menu">
+                              {% if admin %}
+                                <li><a target="_blank" href="{{ admin_interface_url }}">Admin Dashboard</a></li>
+                                <li><a href="{{uri_for('blog-menu', menu_id='newarticle') }}">New Blog Post</a></li>
+                                <li><a href="{{uri_for('blog-menu', menu_id='myarticles') }}">List Blog Posts</a></li>
+                                <li class="divider"></li>
+                              {% endif %}
                               <li><a id="new-shell" href="{{ uri_for("shell") }}" target="_blank">New Shell</a></li> 
                               <li><a href="{{ uri_for("apps") }}">My Apps</a></li>
                               <li class="divider"></li>
-                              {% if admin %}
-                                <li><a href="{{uri_for('blog-menu', menu_id='newarticle') }}">New Post</a></li>
-                                <li><a href="{{uri_for('blog-menu', menu_id='myarticles') }}">List Posts</a></li>
-                                <li class="divider"></li>
-                              {% endif %}
                               <li><a href="{{ uri_for("edit-profile") }}">Edit Profile</a></li>
                               <li><a href="{{ uri_for("edit-email") }}">Change Email</a></li>
                               <li><a href="{{ uri_for("edit-password") }}">Change Password</a></li>                              
@@ -85,6 +101,7 @@
                               <form id="form_login_user" action="{{ uri_for("login") }}" method="post" class="auth-at-dropdown">
                                   <fieldset>
                                       <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                                      <input type="hidden" id="back_to" name="back_to" value="{{ path }}">
                                       <div class="control-group">
                                           <label class="control-label" for="l_username">Username</label>
                                           <div class="controls">
@@ -247,32 +264,35 @@
   <!-- signup shizzle -->
   <script type="text/javascript">
     $(window).load(function(){
-      $("#join").click(function(e){
-        window.location="{{ uri_for("preregister") }}";
-      });
+
     });
   </script>
   
-  <!-- fix yellow input boxes on webkit -->
-  <script type="text/javascript">
+<!-- fix yellow input boxes on webkit -->
+<script type="text/javascript">
+  $(window).load(function(){
+    // fix yellow input boxes on webkit browsers
     if (navigator.userAgent.toLowerCase().indexOf("chrome") >= 0) {
-      $(window).load(function(){
-          setTimeout(function(){
-            $('input:-webkit-autofill').each(function(){
-                var text = $(this).val();
-                var name = $(this).attr('name');
-                $(this).after(this.outerHTML).remove();
-                $('input[name=' + name + ']').val(text);
-            });
-          }, 200);
-
-          // close menu when someone clicks on 'new shell'
-          $('#new-shell').click(function(){
-            $('.btn-dropdown').dropdown('toggle');
-          });
-      });
+      setTimeout(function(){
+        $('input:-webkit-autofill').each(function(){
+          var text = $(this).val();
+          var name = $(this).attr('name');
+          $(this).after(this.outerHTML).remove();
+          $('input[name=' + name + ']').val(text);
+        });
+      }, 200);
     }
-  </script>
+    // close menu when someone clicks on 'new shell'
+    $('#new-shell').click(function(){
+      $('.btn-dropdown').dropdown('toggle');
+    });
+    
+    // menu invite button click
+    $("#join").click(function(e){
+        window.location="{{ uri_for("preregister") }}";
+    });
+  });
+</script>
   <!-- end scripts -->
 </body>
 </html>

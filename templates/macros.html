@@ -32,6 +32,9 @@
 <span class="nav-bits">
   <ul class="nav nav-pills nav-link">
     <li>
+      <a class='{% if page=="apps" %}active{% endif %}' href='{{ uri_for("apps-public") }}'>Apps</a>
+    </li>
+    <li>
       <a class='{% if page=="blog" %}active{% endif %}' href='{{ uri_for("blog") }}'>Blog</a>
     </li>
     <li>

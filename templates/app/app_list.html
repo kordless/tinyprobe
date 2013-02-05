@@ -23,7 +23,19 @@
         </div>
         <div class="modal-footer">
           <a href="#" id="cancel-button" class="btn btn-inverse" data-dismiss="modal">Cancel</a>
-          <a href="#" id="delete-button" class="btn btn-primary">Delete App</a>
+          <a href="#" id="delete-button" class="btn btn-danger btn-primary">Delete App</a>
+        </div>
+    </div>
+    <div id="refresh_notice" class="modal hide fade">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3>Cleared Cache</h3>
+        </div>
+        <div class="modal-body">
+          <p>The files for this app have been flushed from TinyProbe's cache.</p>
+        </div>
+        <div class="modal-footer">
+          <a href="#" id="cancel-button" class="btn btn-inverse" data-dismiss="modal">I Understand</a>
         </div>
     </div>
     <div id="cards">
@@ -31,22 +43,22 @@
         <div id="app-{{ item.key.id() }}" class="card">
           <div class="front">
             <img src="{{ item.thumb_url }}">
-            <h3><span class="app_name">{{ item.name }}{% if not item.public %}</span><i class="icon-lock"></i>{% endif %}</h3>
-            <p class="app_desc">{{ item.description }}</p>
+            <h3><span class="app_name">{{ item.name|bleach }}{% if not item.public %}</span><i class="icon-lock"></i>{% endif %}</h3>
+            <p class="app_desc">{{ item.description|bleach }}</p>
           </div>
           <div class="back">
             <div class="textrow">
-                <h3><span class="app_name">{{ item.name }}{% if not item.public %}</span><i class="icon-lock icon-white"></i>{% endif %}</h3>
+                <h3><span class="app_name">{{ item.name|bleach }}{% if not item.public %}</span><i class="icon-lock icon-white"></i>{% endif %}</h3>
                 <p class="app_author">by <a href="http://github.com/{{ item.github_author }}">@{{ item.github_author }}</a></p>
-                <p class="app_desc">{{ item.description }}</p>
+                <p class="app_desc">{{ item.description|bleach }}</p>
                 <h4>Shell Usage</h4>
-                <p class="app_command">$ {{ item.command }}</p>
+                <p class="app_command">$ {{ item.command|bleach }}</p>
             </div>
             <div class="iconrow">
                 <a rel="tooltip" id="setup-{{item.key.id()}}" class="btn btn-small" title="Details" href="#"><i class="icon-list-alt"></i></a>
-                <a rel="tooltip" id="edit-{{item.gist_id}}" class="btn btn-small" title="Edit" href="#"><i class="icon-pencil"></i></a>
-                <a rel="tooltip" id="refresh-{{item.key.id()}}" class="btn btn-small" title="Clear Memcache Copy" href="#"><i class="icon-refresh"></i></a>
-                <button id="remove-{{item.key.id()}}" class="btn btn-small" title="Remove" href="#"><i class="icon-remove"></i></button>
+                <a rel="tooltip" id="edit-{{item.gist_id}}" class="btn btn-small btn-inverse" title="Edit" href="#"><i class="icon-white icon-pencil"></i></a>
+                <a rel="tooltip" id="refresh-{{item.key.id()}}" class="btn btn-small btn-inverse" title="Clear Memcache Copy" href="#"><i class="icon-white icon-refresh"></i></a>
+                <button id="delete-{{item.key.id()}}" class="btn btn-small btn-danger" title="Delete" href="#"><i class="icon-white icon-remove"></i></button>
             </div>
           </div>
         </div>
@@ -68,7 +80,9 @@
         var refresh_channel = "{{ refresh_channel }}";
         var csrf_token = "{{ csrf_token() }}";
 
+        // yo, tooltips to help peeps
         $('.btn').tooltip();
+
         // watch for refresh_button to be clicked
         $("#refresh_button").click(function() {
             $.ajax({
@@ -95,25 +109,26 @@
         // edit on github buttons
         $('a[id^="edit-"]').each(function(index){
           $('#'+this.id).click(function() {
-            gist_id = this.id.split("-").pop();
+            var gist_id = this.id.split("-").pop();
             window.location = 'https://gist.github.com/'+gist_id;
             return false;
           })
         });
 
+        // detail buttons
         $('a[id^="setup-"]').each(function(index){
           $('#'+this.id).click(function() {
-            gist_id = this.id.split("-").pop();
+            var gist_id = this.id.split("-").pop();
             window.location = '/apps/'+gist_id;
             return false;
           })
         });
 
-        // remove buttons
-        $('button[id^="remove-"]').each(function(index){
+        // delete buttons
+        $('button[id^="delete-"]').each(function(index){
           $('#'+this.id).click(function() {
-            app_id = this.id.split("-").pop();
-            button_id = '#'+this.id;
+            var app_id = this.id.split("-").pop();
+            var button_id = '#'+this.id;
             console.log("click delete");
             $('#delete').modal();
             $('#delete-button').click(function() {
@@ -133,48 +148,39 @@
         $('a[id^="refresh-"]').each(function(index){
           $('#'+this.id).click(function() {
             console.log('yup');
-            app_id = this.id.split("-").pop();
+            var app_id = this.id.split("-").pop();
             button_id = '#'+this.id;
             $.ajax({
               url: '/apps/'+app_id+'/refresh/?&_csrf_token='+csrf_token,
               type: 'GET',
             });
-            console.log(this.id+" clicked");
+            $('#refresh_notice').modal();
           })
         });
 
-        // isotope & card flip
+        // isotope layout
         var $container = $('#cards');
         $container.isotope({
             itemSelector: '.card',
             layoutMode: 'cellsByRow',
-            getSortData : {
-                name : function ( $elem ) {
-                    var name = $elem.find('.tool_name').text();
-                    return name;
-                }
-            },
             sortBy : 'name',
             cellsByRow : { columnWidth : 280 }
         });
-        $('.card .front').append('<span class="flip_back"></span>');
-        $('.card .back').append('<span class="flip_front"></span>');
-        $('.card').click(function(e){
-            if($(this).hasClass('flip')){
-                if(e.target.tagName == "A"){
-                    window.open(e.target.href);
-                    e.preventDefault();
-                } else {
-                    $(this).removeClass('flip');
-                }
-            } else {
-                if(e.target.tagName == "A"){
-                window.open(e.target.href);
-                e.preventDefault();
-                } else {
-                    $(this).addClass('flip');
-                }
-            }
+
+        // set the back of the card to navigate to detail
+        $('div[id^="app-"]').each(function(index){
+            var app_id = this.id.split("-").pop();
+            $('div#'+this.id+' > .back > .textrow').click(function(e){
+                window.location = '/apps/'+app_id+'/';
+            });
+        });
+
+        // flip the cards back and forth on mouse in/out
+        $('.card').mouseenter(function(e){
+            $(this).addClass('flip');
+        }).mouseleave(function(){
+            var that = this;
+            $(that).removeClass('flip')
         });
     });
 </script>

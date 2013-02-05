@@ -27,7 +27,6 @@ import web.models.models as models
 from lib import utils, httpagentparser, captcha
 from web.basehandler import BaseHandler
 from web.basehandler import user_required
-import bleach
 
 # social login
 from lib.github import github
@@ -90,10 +89,23 @@ class AppsClearCacheHandler(BaseHandler):
         user_info = models.User.get_by_id(long(self.user_id))
         app = models.App.get_by_id(long(app_id))
 
-        # we cache four files for each app - readme.md, index.html, tinyprobe.html, tinyprobe.js
-        files = [config.gist_markdown_name, config.gist_index_html_name, config.gist_tinyprobe_html_name, config.gist_javascript_name]
+        # get our gist's filenames
+        files = github.get_gist_filenames(app.gist_id)
+        app_manifest = github.get_gist_manifest(app.gist_id)
 
         if app.owner == user_info.key:
+            # update existing app with current manifest
+            app.name = app_manifest['name']
+            app.command = app_manifest['command']
+            app.description = app_manifest['description']
+            app.thumb_url = app_manifest['thumb_url']
+            app.public = app_manifest['public']
+            app.github_author = app_manifest['github_author']
+            
+            # write out our new app data
+            app.put()
+
+            # loop through files in gist and clear cache
             for afile in files:
                 github.flush_raw_gist_content(app.gist_id, afile)
         
@@ -107,25 +119,45 @@ class AppsClearCacheHandler(BaseHandler):
 
 class AppsDetailHandler(BaseHandler):
     def get(self, app_id = None):
-        # load app info to check ownership, etc.       
+        # load app info to check ownership, etc.
         app = models.App.get_by_id(long(app_id))
 
         # pull down the readme.md file and render to HTML
         raw_gist_content = github.get_raw_gist_content(app.gist_id, config.gist_markdown_name)
-        app_html = bleach.clean(markdown.markdown(raw_gist_content), config.bleach_tags, config.bleach_attributes)
+        app_html = markdown.markdown(raw_gist_content)
 
         # show it if current user is the owner or it's been made public
         try:
             if long(app.owner.id()) == long(self.user_id):
-                params = {'app_name': bleach.clean(app.name), 'app_description': bleach.clean(app.description), 'app_html': app_html}
+                params = {
+                    'app_id': app_id,
+                    'app_title': app.name, 
+                    'app_description': app.description, 
+                    'app_html': app_html,
+                    'app_public': app.public,
+                    'app_gist_id': app.gist_id,
+                }
                 return self.render_template('app/app_detail.html', **params)
         except:
-            if app.public == True:
-                params = {'app_name': bleach.clean(app.name), 'app_description': bleach.clean(app.description), 'app_html': app_html}
-                return self.render_template('app/app_public_detail.html', **params)
-            else:
-                params = {}
-                return self.redirect_to('apps', {})
+            pass
+
+        if app.public == True:
+            params = {
+                'app_id': app_id, 
+                'app_title': app.name, 
+                'github_author': app.github_author, 
+                'app_description': app.description, 
+                'app_html': app_html
+            }
+            return self.render_template('app/app_public_detail.html', **params)
+        else:
+            params = {}
+            return self.redirect_to('apps', {})
+
+    @user_required
+    def put(self, app_id = None):
+        pass
+
 
     @user_required
     def delete(self, app_id = None):
@@ -243,10 +275,10 @@ class AppsBuildListHandler(BaseHandler):
                 # update
                 app2.put()
 
-                # flush memcache copy just in case we had it
-                # we cache four files for each app - readme.md, index.html, tinyprobe.html, tinyprobe.js
-                files = [config.gist_markdown_name, config.gist_index_html_name, config.gist_tinyprobe_html_name, config.gist_javascript_name]
-
+                # flush memcache copies just in case we had them
+                # get our gist's filenames
+                files = github.get_gist_filenames(app['gist_id'])
+                
                 for afile in files:
                     github.flush_raw_gist_content(app2.gist_id, afile)
                

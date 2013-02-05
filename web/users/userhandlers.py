@@ -80,6 +80,9 @@ class LoginHandler(BaseHandler):
                 auth_id = "own:%s" % username
                 user = models.User.get_by_auth_id(auth_id)
 
+            # where we going?
+            back_to = self.form.back_to.data.strip()
+            
             password = self.form.password.data.strip()
             remember_me = True if str(self.request.POST.get('remember_me')) == 'on' else False
 
@@ -124,7 +127,11 @@ class LoginHandler(BaseHandler):
                 timestamp=utils.get_date_time()
             )
             logVisit.put()
-            self.redirect_to('home')
+            if back_to:
+                self.redirect(back_to)
+            else:
+                self.redirect_to('home')
+
         except (InvalidAuthIdError, InvalidPasswordError), e:
             # Returns error message to self.response.write in
             # the BaseHandler.dispatcher
@@ -282,7 +289,7 @@ class CallbackSocialLoginHandler(BaseHandler):
                 else:
                     self.redirect_to('edit-profile')
             else:
-                # user is not logged in, but is trying to log in via github
+                # user is not logged in, but is trying to log in via github 
                 social_user = models.SocialUser.get_by_provider_and_uid('github', str(user_data['login']))
                 if social_user:
                     # Social user exists. Need authenticate related site account
@@ -298,7 +305,6 @@ class CallbackSocialLoginHandler(BaseHandler):
                     self.redirect_to('home')
                 else:
                     # Social user does not exists. Need show login and registration forms!
-                    github_helper.save_association_data(user_data)
                     message = _('This Github account is not associated with a TinyProbe account. '
                                 'Please sign in or create a TinyProbe account before continuing.')
                     self.add_message(message, 'warning')
